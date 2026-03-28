@@ -6,7 +6,7 @@ $s = repo_settings();
 <div class="card">
   <h2>System configuration</h2>
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
-    Values persist in session for this demo. Replace with a <code style="color:var(--accent)">settings</code> table in MySQL.
+    Values are stored in the MySQL <code style="color:var(--accent)">settings</code> table.
   </p>
   <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/admin_settings_save.php') ?>" novalidate>
     <div class="form-row">

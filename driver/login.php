@@ -55,7 +55,7 @@ $vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', '2-wheeler
       <div class="login-divider" role="presentation"></div>
 
       <h2 class="login-register-title">Driver registration</h2>
-      <p class="login-register-lead">Create an account with your vehicle details (stored in session until MySQL is connected).</p>
+      <p class="login-register-lead">Create an account with your vehicle details (saved to MySQL).</p>
       <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/register_driver.php') ?>" novalidate>
         <div class="grid grid--2">
           <div class="form-row">

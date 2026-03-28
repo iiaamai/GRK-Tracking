@@ -50,18 +50,7 @@ if (repo_customer_username_exists($username)) {
     redirect(BASE_URL . '/customer/login.php');
 }
 
-$rows = repo_customers();
-$rows[] = [
-    'id' => repo_next_customer_id(),
-    'username' => $username,
-    'password' => $password,
-    'name' => $name,
-    'email' => $email,
-    'mobile' => $mobile,
-];
-repo_save_customers($rows);
-
-// TODO: INSERT INTO customers (...) VALUES (...)
+repo_insert_customer($username, $email, $password, $name, $mobile);
 
 flash_set('success', 'Account created. You can sign in now.');
 redirect(BASE_URL . '/customer/login.php');

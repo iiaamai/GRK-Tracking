@@ -25,5 +25,5 @@ repo_save_settings([
     'default_region' => $default_region,
 ]);
 
-flash_set('success', 'Settings saved (session — persist to DB later).');
+flash_set('success', 'Settings saved.');
 redirect(BASE_URL . '/admin/dashboard.php?section=settings');

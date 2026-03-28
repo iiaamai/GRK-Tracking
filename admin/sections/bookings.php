@@ -6,7 +6,7 @@ $statuses = ['pending', 'assigned', 'in_transit', 'completed', 'cancelled'];
 ?>
 <div class="card">
   <h2>All bookings</h2>
-  <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">Update status or remove a record (session-backed; replace with SQL later).</p>
+  <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">Update status or remove a record (stored in MySQL).</p>
   <?php if (!$rows): ?>
     <p style="color:var(--muted)">No bookings.</p>
   <?php else: ?>

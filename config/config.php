@@ -15,9 +15,9 @@ if (session_status() === PHP_SESSION_NONE) {
 define('APP_ROOT', dirname(__DIR__));
 
 /** Web path prefix (change if project folder name differs). */
-define('BASE_URL', '/test-project');
+define('BASE_URL', '/GRK-Tracking');
 
-/** MySQL placeholders — wire in phpMyAdmin / mysqli later. */
+/** MySQL (XAMPP default: user root, empty password). Used by data/db.php. */
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'express_logistics');
 define('DB_USER', 'root');

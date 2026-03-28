@@ -53,21 +53,7 @@ if (repo_driver_username_exists($username)) {
     redirect(BASE_URL . '/driver/login.php');
 }
 
-$rows = repo_drivers();
-$rows[] = [
-    'id' => repo_next_driver_id(),
-    'username' => $username,
-    'password' => $password,
-    'name' => $name,
-    'email' => $email,
-    'mobile' => $mobile,
-    'vehicle_type' => $vehicle_type,
-    'plate' => $plate,
-    'capacity_kg' => $capacity_kg,
-];
-repo_save_drivers($rows);
-
-// TODO: INSERT INTO drivers (...) VALUES (...)
+repo_insert_driver($username, $email, $password, $name, $mobile, $vehicle_type, $plate, $capacity_kg);
 
 flash_set('success', 'Driver account created. You can sign in now.');
 redirect(BASE_URL . '/driver/login.php');

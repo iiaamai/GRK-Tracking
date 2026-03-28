@@ -22,6 +22,17 @@ if ($name === '' || $email === '' || $mobile === '' || $vehicle_type === '' || $
     redirect(BASE_URL . '/driver/dashboard.php?section=profile');
 }
 
+$u = auth_user();
+repo_update_driver_profile(
+    (int) ($u['id'] ?? 0),
+    $name,
+    $email,
+    $mobile,
+    $vehicle_type,
+    $plate,
+    $capacity
+);
+
 $_SESSION['user']['name'] = $name;
 $_SESSION['user']['email'] = $email;
 $_SESSION['user']['mobile'] = $mobile;

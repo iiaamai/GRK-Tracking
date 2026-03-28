@@ -6,6 +6,8 @@ require_once dirname(__DIR__) . '/includes/auth.php';
 
 auth_require_role('customer');
 
+$u = auth_user();
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(BASE_URL . '/customer/dashboard.php?section=profile');
 }
@@ -19,11 +21,11 @@ if ($name === '' || $email === '' || $mobile === '') {
     redirect(BASE_URL . '/customer/dashboard.php?section=profile');
 }
 
+repo_update_customer_profile((int) ($u['id'] ?? 0), $name, $email, $mobile);
+
 $_SESSION['user']['name'] = $name;
 $_SESSION['user']['email'] = $email;
 $_SESSION['user']['mobile'] = $mobile;
-
-// TODO: UPDATE customers SET ... WHERE id = ?
 
 flash_set('success', 'Profile updated.');
 redirect(BASE_URL . '/customer/dashboard.php?section=profile');

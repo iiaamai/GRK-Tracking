@@ -24,7 +24,7 @@ require_once __DIR__ . '/includes/init.php';
     <section class="landing__hero">
       <span class="landing__eyebrow">Express delivery & logistics</span>
       <h1>Large batches and container-scale freight, moved by trucks you can trust.</h1>
-      <p class="lead">Choose a portal to book shipments, run deliveries, or manage operations. Session-based demo — ready for MySQL on XAMPP.</p>
+      <p class="lead">Choose a portal to book shipments, run deliveries, or manage operations. Data is stored in MySQL on XAMPP; sign-in uses session cookies.</p>
       <div class="landing__actions">
         <a class="btn btn--primary" href="<?= e(BASE_URL . '/customer/index.php') ?>">Customer</a>
         <a class="btn btn--ghost" href="<?= e(BASE_URL . '/driver/index.php') ?>">Driver</a>

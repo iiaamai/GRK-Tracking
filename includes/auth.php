@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-require_once APP_ROOT . '/data/mock_data.php';
 require_once APP_ROOT . '/data/repository.php';
 
 function auth_login(string $role, string $username, string $password): ?array
@@ -23,10 +22,11 @@ function auth_login(string $role, string $username, string $password): ?array
         return null;
     }
     if ($role === 'admin') {
-        foreach (mock_users()['admin'] as $u) {
-            if (strcasecmp((string) ($u['username'] ?? ''), $username) === 0 && ($u['password'] ?? '') === $password) {
-                return $u + ['role' => 'admin'];
-            }
+        $stmt = db()->prepare('SELECT id, username, email, password, name FROM admins WHERE LOWER(username) = LOWER(?) LIMIT 1');
+        $stmt->execute([$username]);
+        $row = $stmt->fetch();
+        if ($row && ($row['password'] ?? '') === $password) {
+            return $row + ['role' => 'admin'];
         }
         return null;
     }

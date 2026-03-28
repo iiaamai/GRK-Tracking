@@ -36,7 +36,7 @@ if ($act === 'add') {
         'password' => $password,
     ];
     repo_save_customers($rows);
-    flash_set('success', 'Customer added (session store — connect MySQL for persistence).');
+    flash_set('success', 'Customer added.');
     redirect(BASE_URL . '/admin/dashboard.php?section=customers');
 }
 

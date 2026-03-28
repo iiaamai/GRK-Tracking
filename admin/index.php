@@ -24,7 +24,7 @@ require_once dirname(__DIR__) . '/includes/init.php';
     <section class="landing__hero">
       <span class="landing__eyebrow">Control tower</span>
       <h1>Bookings, people, fleet, and configuration in one secure dashboard.</h1>
-      <p class="lead">Full CRUD against session-backed data (swap for MySQL when ready).</p>
+      <p class="lead">Full CRUD backed by MySQL (XAMPP).</p>
       <div class="landing__actions">
         <a class="btn btn--primary" href="<?= e(BASE_URL . '/admin/login.php') ?>">Admin login</a>
         <a class="btn btn--ghost" href="<?= e(BASE_URL . '/index.php') ?>">Back</a>

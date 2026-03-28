@@ -28,6 +28,6 @@ $f = repo_fleet();
 <div class="card">
   <h2><?= e(repo_settings()['company_name'] ?? 'Express Urban Logistics') ?></h2>
   <p style="margin:0;color:var(--muted);font-size:0.95rem;">
-    Truck-first logistics for pallets and container-scale freight. Data below uses session storage until MySQL is connected.
+    Truck-first logistics for pallets and container-scale freight. Figures below reflect live MySQL data.
   </p>
 </div>

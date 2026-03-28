@@ -1,0 +1,50 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/includes/init.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Express Urban Logistics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="<?= e(asset('css/global.css')) ?>">
+  <link rel="stylesheet" href="<?= e(asset('css/landing.css')) ?>">
+</head>
+<body>
+  <div class="landing">
+    <header class="landing__topbar">
+      <span class="landing__logo">EXPRESS LOGISTICS</span>
+      <span class="landing__tagline">Urban & regional truck delivery</span>
+    </header>
+    <section class="landing__hero">
+      <span class="landing__eyebrow">Express delivery & logistics</span>
+      <h1>Large batches and container-scale freight, moved by trucks you can trust.</h1>
+      <p class="lead">Choose a portal to book shipments, run deliveries, or manage operations. Session-based demo — ready for MySQL on XAMPP.</p>
+      <div class="landing__actions">
+        <a class="btn btn--primary" href="<?= e(BASE_URL . '/customer/index.php') ?>">Customer</a>
+        <a class="btn btn--ghost" href="<?= e(BASE_URL . '/driver/index.php') ?>">Driver</a>
+        <a class="btn btn--ghost" href="<?= e(BASE_URL . '/admin/index.php') ?>">Admin</a>
+      </div>
+    </section>
+    <section class="landing__grid">
+      <div class="landing-card">
+        <h3>Fleet</h3>
+        <p>6-wheelers, 4-wheelers, L300 vans, and 2-wheeler support for dense city legs.</p>
+      </div>
+      <div class="landing-card">
+        <h3>Live flow</h3>
+        <p>Customer bookings surface instantly to drivers as available jobs.</p>
+      </div>
+      <div class="landing-card">
+        <h3>Operations</h3>
+        <p>Admins manage bookings, people, fleet, and configuration in one place.</p>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

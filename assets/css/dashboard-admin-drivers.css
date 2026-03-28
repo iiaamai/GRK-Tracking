@@ -1,0 +1,5 @@
+/* admin/sections/drivers.php */
+.table-wrap label {
+  font-size: 0.75rem;
+  color: var(--muted);
+}

@@ -1,1 +1,114 @@
 /* driver/sections/deliveries.php */
+
+.driver-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem;
+  align-items: stretch;
+}
+
+.driver-job-card {
+  background: #ffffff;
+  border: 1px solid rgba(2, 7, 24, 0.08);
+  border-radius: 12px;
+  padding: 16px 18px 14px 18px;
+  overflow: hidden; /* ensures rounded corners clip the CTA bar */
+}
+
+.driver-job-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.driver-job-card__left {
+  min-width: 0;
+}
+
+.driver-job-card__route {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #020718;
+  margin-bottom: 3px;
+}
+
+.driver-job-card__biz {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.driver-job-card__payout {
+  color: var(--primary);
+  font-weight: 900;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.driver-job-card__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 34px;
+  row-gap: 16px;
+}
+
+.driver-job-card__label {
+  font-size: 0.65rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  margin-bottom: 4px;
+}
+
+.driver-job-card__value {
+  font-size: 0.85rem;
+  color: #020718;
+  font-weight: 600;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.driver-job-card__cta {
+  margin-top: 22px;
+}
+
+.driver-job-card__ctaBtn {
+  width: 100%;
+  border: 0;
+  height: 44px;
+  background: linear-gradient(90deg, #020718 0%, #071a3c 50%, #020718 100%);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+}
+
+.driver-job-card__ctaBtn:hover {
+  filter: brightness(1.05);
+}
+
+@media (max-width: 680px) {
+  .driver-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-job-card__grid {
+    column-gap: 24px;
+  }
+}
+
+@media (min-width: 681px) and (max-width: 980px) {
+  .driver-cards {
+    grid-template-columns: 1fr;
+  }
+}

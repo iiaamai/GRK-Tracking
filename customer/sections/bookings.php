@@ -27,8 +27,8 @@ $mine = repo_customer_bookings((int) $u['id']);
             <?php $cls = 'badge--' . preg_replace('/[^a-z_]/', '', (string) ($b['status'] ?? 'pending')); ?>
             <tr>
               <td><?= e($b['booking_number'] ?? '') ?></td>
-              <td><?= e($b['posting_date'] ?? '') ?></td>
-              <td><?= e($b['booking_datetime'] ?? '') ?></td>
+              <td><?= e(format_timestamp($b['posting_date'] ?? '', 'M j, Y')) ?></td>
+              <td><?= e(format_timestamp($b['booking_datetime'] ?? '')) ?></td>
               <td><span class="badge <?= e($cls) ?>"><?= e($b['status'] ?? '') ?></span></td>
               <td><?= e($b['vehicle_type'] ?? '') ?></td>
               <td><?= e($b['pickup'] ?? '') ?> → <?= e($b['dropoff'] ?? '') ?></td>

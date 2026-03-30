@@ -40,3 +40,47 @@ function flash_get(string $key): ?string
     unset($_SESSION['_flash'][$key]);
     return $m;
 }
+
+/**
+ * Format a MySQL TIMESTAMP/DATETIME-like string for display.
+ * Accepts values like:
+ * - `YYYY-MM-DD HH:MM:SS`
+ * - `YYYY-MM-DDTHH:MM:SS`
+ * - `YYYY-MM-DDTHH:MM`
+ */
+function format_timestamp(?string $value, ?string $format = null, ?string $timezone = null): string
+{
+    $value = $value === null ? '' : trim((string) $value);
+    if ($value === '') {
+        return '';
+    }
+
+    // Normalize HTML datetime-local separator (`T`) to MySQL-style space.
+    $value = str_replace('T', ' ', $value);
+
+    // datetime-local sometimes omits seconds: `YYYY-MM-DD HH:MM` -> `...:00`
+    if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $value) === 1) {
+        $value .= ':00';
+    }
+
+    $tzName = $timezone ?: (date_default_timezone_get() ?: 'Asia/Manila');
+    $tz = new DateTimeZone($tzName);
+    $dt = null;
+    try {
+        $dt = new DateTimeImmutable($value, $tz);
+    } catch (Throwable $e) {
+        // If parsing fails, fall back to the raw value (escaped by the caller).
+        return $value;
+    }
+
+    if ($format === null) {
+        // If a value is date-only (e.g. `YYYY-MM-DD`), display it as a date.
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) === 1) {
+            $format = 'M j, Y';
+        } else {
+            $format = 'M j, Y h:i A';
+        }
+    }
+
+    return $dt->format($format);
+}

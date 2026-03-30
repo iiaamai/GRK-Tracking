@@ -62,8 +62,8 @@ $trackUrl = BASE_URL . '/customer/dashboard.php';
           <div><dt>Contact name</dt><dd><?= e($b['name'] ?? '') ?></dd></div>
           <div><dt>Email</dt><dd><?= e($b['email'] ?? '') ?></dd></div>
           <div><dt>Mobile</dt><dd><?= e($b['mobile'] ?? '') ?></dd></div>
-          <div><dt>Booking date & time</dt><dd><?= e($b['booking_datetime'] ?? '') ?></dd></div>
-          <div><dt>Posted</dt><dd><?= e($b['posting_date'] ?? '') ?></dd></div>
+          <div><dt>Booking date & time</dt><dd><?= e(format_timestamp($b['booking_datetime'] ?? '')) ?></dd></div>
+          <div><dt>Posted</dt><dd><?= e(format_timestamp($b['posting_date'] ?? '', 'M j, Y')) ?></dd></div>
         </dl>
       </section>
 
@@ -120,7 +120,7 @@ $trackUrl = BASE_URL . '/customer/dashboard.php';
             <?php $cls = 'badge--' . preg_replace('/[^a-z_]/', '', (string) ($b['status'] ?? 'pending')); ?>
             <tr>
               <td><?= e($b['booking_number'] ?? '') ?></td>
-              <td><?= e($b['booking_datetime'] ?? '') ?></td>
+              <td><?= e(format_timestamp($b['booking_datetime'] ?? '')) ?></td>
               <td><span class="badge <?= e($cls) ?>"><?= e($b['status'] ?? '') ?></span></td>
               <td><?= e($b['pickup'] ?? '') ?> → <?= e($b['dropoff'] ?? '') ?></td>
             </tr>

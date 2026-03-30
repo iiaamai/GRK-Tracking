@@ -21,6 +21,12 @@ $cargo_desc = trim((string) ($_POST['cargo_desc'] ?? ''));
 $additional = trim((string) ($_POST['additional_requirements'] ?? ''));
 $booking_dt = trim((string) ($_POST['booking_datetime'] ?? ''));
 
+// Normalize `datetime-local` values so MySQL TIMESTAMP accepts them.
+$booking_dt = str_replace('T', ' ', $booking_dt);
+if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $booking_dt) === 1) {
+    $booking_dt .= ':00';
+}
+
 if ($name === '' || $email === '' || $mobile === '' || $vehicle_type === '' || $pickup === '' || $dropoff === '' || $booking_dt === '') {
     flash_set('error', 'Please fill all required fields.');
     redirect(BASE_URL . '/customer/dashboard.php?section=booking');

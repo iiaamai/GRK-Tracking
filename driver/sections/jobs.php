@@ -29,7 +29,7 @@ $jobs = repo_driver_jobs_available();
               <td><?= e($b['booking_number'] ?? '') ?></td>
               <td><?= e($b['name'] ?? '') ?></td>
               <td><?= e($b['vehicle_type'] ?? '') ?></td>
-              <td><?= e($b['booking_datetime'] ?? '') ?></td>
+              <td><?= e(format_timestamp($b['booking_datetime'] ?? '')) ?></td>
               <td><?= e($b['pickup'] ?? '') ?> → <?= e($b['dropoff'] ?? '') ?></td>
               <td>
                 <form method="post" action="<?= e(BASE_URL . '/handlers/driver_accept_job.php') ?>" style="margin:0">

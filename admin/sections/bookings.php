@@ -28,8 +28,8 @@ $statuses = ['pending', 'assigned', 'in_transit', 'completed', 'cancelled'];
             <tr>
               <td><?= e($row['booking_number'] ?? '') ?></td>
               <td><?= e($row['name'] ?? '') ?></td>
-              <td><?= e($row['posting_date'] ?? '') ?></td>
-              <td><?= e($row['booking_datetime'] ?? '') ?></td>
+              <td><?= e(format_timestamp($row['posting_date'] ?? '', 'M j, Y')) ?></td>
+              <td><?= e(format_timestamp($row['booking_datetime'] ?? '')) ?></td>
               <td>
                 <form method="post" action="<?= e(BASE_URL . '/handlers/admin_booking_action.php') ?>" style="display:flex;gap:0.35rem;align-items:center;margin:0;flex-wrap:wrap">
                   <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">

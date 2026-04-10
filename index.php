@@ -2,27 +2,36 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/init.php';
+$logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Express Urban Logistics</title>
+  <title>GRK Trucking Services</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="<?= e(asset('css/global.css')) ?>">
-  <link rel="stylesheet" href="<?= e(asset('css/landing.css')) ?>">
+  <link rel="stylesheet" href="<?= e(asset_v('css/global.css')) ?>">
+  <link rel="stylesheet" href="<?= e(asset_v('css/landing.css')) ?>">
 </head>
 <body>
   <div class="landing">
     <header class="landing__topbar">
-      <span class="landing__logo">EXPRESS LOGISTICS</span>
+      <span class="landing__logo">
+        <span class="landing__logoFrame">
+          <img src="<?= e($logoUrl) ?>" alt="GRK Trucking Services logo">
+        </span>
+        <span class="landing__logoText">
+          <strong>GRK TRUCKING SERVICES</strong>
+          <small>Urban & regional delivery</small>
+        </span>
+      </span>
       <span class="landing__tagline">Urban & regional truck delivery</span>
     </header>
     <section class="landing__hero">
-      <span class="landing__eyebrow">Express delivery & logistics</span>
+      <span class="landing__eyebrow">Reliable trucking & logistics</span>
       <h1>Large batches and container-scale freight, moved by trucks you can trust.</h1>
       <p class="lead">Choose a portal to book shipments, run deliveries, or manage operations. Data is stored in MySQL on XAMPP; sign-in uses session cookies.</p>
       <div class="landing__actions">

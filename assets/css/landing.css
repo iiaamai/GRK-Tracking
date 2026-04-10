@@ -28,11 +28,12 @@
   margin: 0 0 1rem;
   line-height: 1.15;
   color: var(--shade);
+  font-weight: 900;
 }
 
 .landing__hero p.lead {
   color: var(--muted);
-  max-width: 560px;
+  max-width: 640px;
   margin: 0 auto 1.5rem;
   font-size: 1.05rem;
 }
@@ -57,8 +58,8 @@
 .landing-card {
   background: var(--neutral);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
+  border-radius: 20px;
+  padding: 1.35rem;
   text-align: left;
   box-shadow: var(--shadow-sm);
 }
@@ -81,31 +82,91 @@
   justify-content: space-between;
   padding: 1rem clamp(1rem, 3vw, 2rem);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: var(--shade);
+  background: linear-gradient(180deg, #000000 0%, #08253a 100%);
 }
 
 .landing__logo {
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
   color: #ffffff;
 }
 
-.landing--customer .landing__logo,
-.landing--driver .landing__logo,
-.landing--admin .landing__logo {
-  color: var(--primary);
+.landing__logoFrame {
+  width: 82px;
+  height: 82px;
+  padding: 0.42rem;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(142, 213, 243, 0.92));
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 0.25rem;
+}
+
+.landing__logoText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.landing__logoText strong {
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+}
+
+.landing__logoText small {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
 }
 
 .landing__back {
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.82);
+  padding: 0.6rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .landing__back:hover {
   color: #ffffff;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .landing__tagline {
   color: rgba(255, 255, 255, 0.65);
   font-size: 0.9rem;
+}
+
+@media (max-width: 720px) {
+  .landing__topbar {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .landing__logo {
+    flex-direction: column;
+  }
+
+  .landing__logoText {
+    align-items: center;
+  }
 }

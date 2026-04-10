@@ -50,8 +50,13 @@ $row = [
     'status' => 'pending',
     'driver_id' => null,
     'payout' => null,
+    'gatepass_image' => null,
+    'eir_image' => null,
 ];
 
 repo_add_booking($row);
-flash_set('success', 'Booking created: ' . $row['booking_number'] . '. Drivers will see it under Available Jobs.');
+flash_set(
+    'success',
+    'Booking created: ' . $row['booking_number'] . '. An administrator will review it and upload a gate pass before drivers can accept the job.'
+);
 redirect(BASE_URL . '/customer/dashboard.php?section=bookings');

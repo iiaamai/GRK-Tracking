@@ -52,6 +52,8 @@ function mock_bookings_seed(): array
             'status' => 'assigned',
             'driver_id' => 1,
             'payout' => 5200.0,
+            'gatepass_image' => null,
+            'eir_image' => null,
         ],
         [
             'booking_number' => 'EXP-2026-0002',
@@ -67,8 +69,11 @@ function mock_bookings_seed(): array
             'dropoff' => 'BGC',
             'cargo_desc' => 'Retail cartons — 200 boxes',
             'additional_requirements' => '',
-            'status' => 'pending',
+            'status' => 'ready_for_assignment',
             'driver_id' => null,
+            'payout' => null,
+            'gatepass_image' => 'uploads/bookings/demo-gatepass.png',
+            'eir_image' => null,
         ],
     ];
 }

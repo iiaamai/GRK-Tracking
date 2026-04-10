@@ -19,6 +19,31 @@ function asset(string $path): string
 }
 
 /**
+ * Asset URL with cache-busting version from filemtime.
+ */
+function asset_v(string $path): string
+{
+    $url = asset($path);
+    $full = APP_ROOT . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, ltrim($path, '/'));
+    $v = is_file($full) ? (string) filemtime($full) : (string) time();
+    $sep = str_contains($url, '?') ? '&' : '?';
+    return $url . $sep . 'v=' . rawurlencode($v);
+}
+
+/**
+ * Public URL for a file stored under the project root (e.g. uploads/bookings/...).
+ */
+function upload_public_url(?string $relativePath): string
+{
+    $relativePath = $relativePath === null ? '' : trim(str_replace('\\', '/', $relativePath), '/');
+    if ($relativePath === '') {
+        return '';
+    }
+
+    return rtrim(BASE_URL, '/') . '/' . $relativePath;
+}
+
+/**
  * Escape output for HTML.
  */
 function e(?string $s): string

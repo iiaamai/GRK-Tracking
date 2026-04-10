@@ -25,7 +25,7 @@ if ($act === 'delete') {
     redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
 }
 
-$allowed = ['pending', 'assigned', 'in_transit', 'completed', 'cancelled'];
+$allowed = ['pending', 'ready_for_assignment', 'assigned', 'in_transit', 'completed', 'cancelled'];
 if (!in_array($act, $allowed, true)) {
     flash_set('error', 'Invalid status.');
     redirect(BASE_URL . '/admin/dashboard.php?section=bookings');

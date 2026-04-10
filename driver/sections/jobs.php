@@ -6,7 +6,7 @@ $jobs = repo_driver_jobs_available();
 <div class="card">
   <h2>Available Jobs</h2>
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
-    Accept a job to assign it to you and move it to <strong>My Deliveries</strong>.
+    Jobs appear here only after an administrator has reviewed the booking and uploaded a <strong>gate pass</strong>.
   </p>
   <?php if (!$jobs): ?>
     <p style="color:var(--muted)">No open jobs. When customers book, listings appear here.</p>
@@ -23,6 +23,7 @@ $jobs = repo_driver_jobs_available();
           $dtVal = (string) ($b['booking_datetime'] ?? '');
           $expectedPayout = $b['payout'] ?? 5200.0;
           $payoutStr = '$' . number_format((float) $expectedPayout, 0);
+          $gpLink = BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode((string) ($b['booking_number'] ?? '')) . '&doc=gatepass';
         ?>
         <div class="driver-job-card">
           <div class="driver-job-card__head">
@@ -50,6 +51,10 @@ $jobs = repo_driver_jobs_available();
               <div class="driver-job-card__label">PREF TIME</div>
               <div class="driver-job-card__value"><?= e(format_timestamp($dtVal, 'h:i A')) ?></div>
             </div>
+          </div>
+
+          <div class="driver-job-card__docs">
+            <a href="<?= e($gpLink) ?>" target="_blank" rel="noopener noreferrer">View gate pass</a>
           </div>
 
           <div class="driver-job-card__cta">

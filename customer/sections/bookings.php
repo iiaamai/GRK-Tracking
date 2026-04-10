@@ -18,6 +18,7 @@ $mine = repo_customer_bookings((int) $u['id']);
             <th>Posting</th>
             <th>Pickup time</th>
             <th>Status</th>
+            <th>EIR</th>
             <th>Vehicle</th>
             <th>Route</th>
           </tr>
@@ -25,11 +26,24 @@ $mine = repo_customer_bookings((int) $u['id']);
         <tbody>
           <?php foreach ($mine as $b): ?>
             <?php $cls = 'badge--' . preg_replace('/[^a-z_]/', '', (string) ($b['status'] ?? 'pending')); ?>
+            <?php
+              $bn = (string) ($b['booking_number'] ?? '');
+              $eirLink = BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir';
+              $eirReady = (string) ($b['eir_image'] ?? '') !== '';
+              $canShowEir = in_array(($b['status'] ?? ''), ['in_transit', 'completed'], true) && $eirReady;
+            ?>
             <tr>
               <td><?= e($b['booking_number'] ?? '') ?></td>
               <td><?= e(format_timestamp($b['posting_date'] ?? '', 'M j, Y')) ?></td>
               <td><?= e(format_timestamp($b['booking_datetime'] ?? '')) ?></td>
               <td><span class="badge <?= e($cls) ?>"><?= e($b['status'] ?? '') ?></span></td>
+              <td>
+                <?php if ($canShowEir): ?>
+                  <a href="<?= e($eirLink) ?>" target="_blank" rel="noopener noreferrer">View</a>
+                <?php else: ?>
+                  <span style="color:var(--muted)">—</span>
+                <?php endif; ?>
+              </td>
               <td><?= e($b['vehicle_type'] ?? '') ?></td>
               <td><?= e($b['pickup'] ?? '') ?> → <?= e($b['dropoff'] ?? '') ?></td>
             </tr>

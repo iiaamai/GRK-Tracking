@@ -74,7 +74,8 @@ CREATE TABLE `fleet` (
 
 -- ---------------------------------------------------------------------------
 -- Bookings (mock_bookings_seed + handlers)
--- Status values used in app: pending, assigned, in_transit, completed, cancelled
+-- Status values used in app: pending (awaiting admin gate pass), ready_for_assignment,
+-- assigned, in_transit, completed, cancelled
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE `bookings` (
@@ -95,6 +96,8 @@ CREATE TABLE `bookings` (
   `status` VARCHAR(32) NOT NULL DEFAULT 'pending',
   `driver_id` INT UNSIGNED NULL,
   `payout` DECIMAL(12, 2) NULL,
+  `gatepass_image` VARCHAR(512) NULL,
+  `eir_image` VARCHAR(512) NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_bookings_number` (`booking_number`),
   KEY `idx_bookings_customer` (`customer_id`),
@@ -143,21 +146,24 @@ INSERT INTO `fleet` (`id`, `label`, `type`, `plate`, `capacity_kg`, `status`) VA
 INSERT INTO `bookings` (
   `booking_number`, `customer_id`, `username`, `name`, `email`, `mobile`,
   `booking_datetime`, `posting_date`, `vehicle_type`, `pickup`, `dropoff`,
-  `cargo_desc`, `additional_requirements`, `status`, `driver_id`, `payout`
+  `cargo_desc`, `additional_requirements`, `status`, `driver_id`, `payout`,
+  `gatepass_image`, `eir_image`
 ) VALUES
   (
     'EXP-2026-0001', 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001',
     '2026-03-26 09:30:00', '2026-03-26', '6-wheeler',
     'Quezon City Warehouse', 'Makati CBD',
     'Palletized goods — 40 pallets', 'Liftgate required; morning slot only.',
-    'assigned', 1, 5200.00
+    'assigned', 1, 5200.00,
+    NULL, NULL
   ),
   (
     'EXP-2026-0002', 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002',
     '2026-03-27 14:00:00', '2026-03-27', 'L300',
     'Parañaque Hub', 'BGC',
     'Retail cartons — 200 boxes', '',
-    'pending', NULL, NULL
+    'ready_for_assignment', NULL, NULL,
+    'uploads/bookings/demo-gatepass.png', NULL
   );
 
 INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES

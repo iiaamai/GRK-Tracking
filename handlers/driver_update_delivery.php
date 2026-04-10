@@ -19,6 +19,17 @@ if ($bn === '' || !in_array($action, ['in_transit', 'completed'], true)) {
     redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
 }
 
+$current = repo_find_booking_by_number($bn);
+if ($current === null || (int) ($current['driver_id'] ?? 0) !== (int) $u['id']) {
+    flash_set('error', 'Invalid booking.');
+    redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
+}
+
+if ($action === 'completed' && trim((string) ($current['eir_image'] ?? '')) === '') {
+    flash_set('error', 'Upload the Equipment Interchange Receipt (EIR) before completing this delivery.');
+    redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
+}
+
 repo_update_booking($bn, static function (array $b) use ($u, $action) {
     if ((int) ($b['driver_id'] ?? 0) !== (int) $u['id']) {
         return $b;

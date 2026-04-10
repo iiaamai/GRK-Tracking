@@ -7,7 +7,7 @@ $dt = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y
 <div class="card">
   <h2>Request a truck</h2>
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
-    Submits to the driver pool as <span class="badge badge--pending">pending</span> until a driver accepts.
+    Your request is saved as <span class="badge badge--pending">pending</span> until an administrator reviews it and uploads a <strong>gate pass</strong>. Only then can a driver accept the job.
   </p>
   <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/booking_submit.php') ?>" novalidate>
     <div class="grid grid--2">

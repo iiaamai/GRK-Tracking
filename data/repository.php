@@ -19,6 +19,10 @@ function repo_map_booking_row(array $row): array
         ? (int) $row['driver_id'] : null;
     $row['payout'] = isset($row['payout']) && $row['payout'] !== null && $row['payout'] !== ''
         ? (float) $row['payout'] : null;
+    $row['gatepass_image'] = isset($row['gatepass_image']) && $row['gatepass_image'] !== null && $row['gatepass_image'] !== ''
+        ? (string) $row['gatepass_image'] : null;
+    $row['eir_image'] = isset($row['eir_image']) && $row['eir_image'] !== null && $row['eir_image'] !== ''
+        ? (string) $row['eir_image'] : null;
 
     return $row;
 }
@@ -95,11 +99,13 @@ function repo_upsert_booking_row(array $b): void
 INSERT INTO bookings (
   booking_number, customer_id, username, name, email, mobile,
   booking_datetime, posting_date, vehicle_type, pickup, dropoff,
-  cargo_desc, additional_requirements, status, driver_id, payout
+  cargo_desc, additional_requirements, status, driver_id, payout,
+  gatepass_image, eir_image
 ) VALUES (
   ?,?,?,?,?,?,
   ?,?,?,?,?,
-  ?,?,?,?,?
+  ?,?,?,?,?,
+  ?,?
 ) ON DUPLICATE KEY UPDATE
   customer_id = VALUES(customer_id),
   username = VALUES(username),
@@ -115,11 +121,15 @@ INSERT INTO bookings (
   additional_requirements = VALUES(additional_requirements),
   status = VALUES(status),
   driver_id = VALUES(driver_id),
-  payout = VALUES(payout)
+  payout = VALUES(payout),
+  gatepass_image = VALUES(gatepass_image),
+  eir_image = VALUES(eir_image)
 SQL;
     $stmt = $pdo->prepare($sql);
     $driverId = $b['driver_id'] ?? null;
     $payout = $b['payout'] ?? null;
+    $gate = $b['gatepass_image'] ?? null;
+    $eir = $b['eir_image'] ?? null;
     $stmt->execute([
         $b['booking_number'] ?? '',
         (int) ($b['customer_id'] ?? 0),
@@ -137,6 +147,8 @@ SQL;
         (string) ($b['status'] ?? 'pending'),
         $driverId !== null ? (int) $driverId : null,
         $payout !== null ? (string) $payout : null,
+        $gate !== null && $gate !== '' ? (string) $gate : null,
+        $eir !== null && $eir !== '' ? (string) $eir : null,
     ]);
 }
 
@@ -280,7 +292,11 @@ function repo_customer_bookings(int $customerId): array
 function repo_driver_jobs_available(): array
 {
     $pdo = db();
-    $stmt = $pdo->query("SELECT * FROM bookings WHERE status = 'pending' ORDER BY booking_datetime ASC");
+    $stmt = $pdo->query(
+        "SELECT * FROM bookings WHERE status = 'ready_for_assignment'
+         AND gatepass_image IS NOT NULL AND gatepass_image <> ''
+         ORDER BY booking_datetime ASC"
+    );
     $out = [];
     foreach ($stmt->fetchAll() as $row) {
         $out[] = repo_map_booking_row($row);

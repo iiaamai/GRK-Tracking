@@ -71,6 +71,62 @@
   word-break: break-word;
 }
 
+.driver-job-card__docs {
+  margin-top: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.driver-job-card__docs a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.driver-job-card__docs a:hover {
+  text-decoration: underline;
+}
+
+.driver-job-card__docsSep {
+  margin: 0 0.35rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.driver-job-card__eirForm {
+  margin-top: 10px;
+}
+
+.driver-job-card__eirLbl {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.driver-job-card__eirRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.driver-job-card__eirRow input[type="file"] {
+  flex: 1 1 140px;
+  min-width: 0;
+  font-size: 0.78rem;
+}
+
+.driver-job-card__hint {
+  margin: 0;
+  padding: 0.65rem 0.5rem;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--bg-muted);
+  border: 1px dashed var(--border);
+}
+
 .driver-job-card__cta {
   margin-top: 22px;
 }

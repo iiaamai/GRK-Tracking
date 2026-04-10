@@ -18,7 +18,12 @@ if ($bn === '') {
 }
 
 $current = repo_find_booking_by_number($bn);
-if (!$current || ($current['status'] ?? '') !== 'pending') {
+$gp = (string) ($current['gatepass_image'] ?? '');
+if (
+    !$current
+    || ($current['status'] ?? '') !== 'ready_for_assignment'
+    || $gp === ''
+) {
     flash_set('error', 'That job is no longer available.');
     redirect(BASE_URL . '/driver/dashboard.php?section=jobs');
 }

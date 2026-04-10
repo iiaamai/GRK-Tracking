@@ -24,6 +24,6 @@ $del = repo_driver_deliveries((int) $u['id']);
   <h2>Hello, <?= e((string) $u['name']) ?></h2>
   <p style="margin:0;color:var(--muted);font-size:0.95rem;">
     Vehicle: <strong><?= e((string) ($u['vehicle_type'] ?? '')) ?></strong> · Plate <strong><?= e((string) ($u['plate'] ?? '')) ?></strong>
-    · New customer bookings appear automatically under Available Jobs.
+    · Available jobs appear after admin uploads a gate pass for each booking.
   </p>
 </div>

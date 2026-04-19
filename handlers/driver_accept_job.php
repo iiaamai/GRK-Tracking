@@ -31,7 +31,7 @@ if (
 repo_update_booking($bn, static function (array $b) use ($u) {
     $b['status'] = 'assigned';
     $b['driver_id'] = (int) $u['id'];
-    $b['payout'] = $b['payout'] ?? 5200.0;
+
     return $b;
 });
 

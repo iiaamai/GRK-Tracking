@@ -1,4 +1,33 @@
 /* customer/sections/booking.php */
+.booking-payout-summary {
+  margin: 1rem 0 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+  background: var(--surface-2, rgba(0, 0, 0, 0.2));
+}
+
+.booking-payout-summary__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.booking-payout-summary__value {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.booking-payout-summary__value.is-amount {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text, inherit);
+}
+
 .card form .btn {
   margin-top: 0.25rem;
 }

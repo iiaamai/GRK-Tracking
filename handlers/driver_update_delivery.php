@@ -39,7 +39,6 @@ repo_update_booking($bn, static function (array $b) use ($u, $action) {
     }
     if ($action === 'completed') {
         $b['status'] = 'completed';
-        $b['payout'] = (float) ($b['payout'] ?? 4500);
     }
     return $b;
 });

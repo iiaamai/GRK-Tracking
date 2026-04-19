@@ -10,7 +10,7 @@ $done = array_filter($all, static function ($b) use ($u) {
 ?>
 <div class="card">
   <h2>Summary</h2>
-  <p style="margin:0;font-size:1.25rem;font-weight:700;"><?= number_format($total, 2) ?> ₱</p>
+  <p style="margin:0;font-size:1.25rem;font-weight:700;"><?= e(format_php_money((float) $total)) ?></p>
   <p style="margin:0.35rem 0 0;color:var(--muted);font-size:0.9rem;">Total from completed deliveries (demo payout field).</p>
 </div>
 
@@ -33,7 +33,7 @@ $done = array_filter($all, static function ($b) use ($u) {
             <tr>
               <td><?= e($b['booking_number'] ?? '') ?></td>
               <td><?= e($b['pickup'] ?? '') ?> → <?= e($b['dropoff'] ?? '') ?></td>
-              <td><?= number_format((float) ($b['payout'] ?? 0), 2) ?></td>
+              <td><?= e(format_php_money(isset($b['payout']) && $b['payout'] !== null ? (float) $b['payout'] : null)) ?></td>
             </tr>
           <?php endforeach; ?>
         </tbody>

@@ -21,8 +21,8 @@ $jobs = repo_driver_jobs_available();
           $cargo = (string) ($b['cargo_desc'] ?? '—');
           $vehicleType = (string) ($b['vehicle_type'] ?? '—');
           $dtVal = (string) ($b['booking_datetime'] ?? '');
-          $expectedPayout = $b['payout'] ?? 5200.0;
-          $payoutStr = '$' . number_format((float) $expectedPayout, 0);
+          $payoutVal = $b['payout'] ?? null;
+          $payoutStr = format_php_money($payoutVal !== null ? (float) $payoutVal : null);
           $gpLink = BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode((string) ($b['booking_number'] ?? '')) . '&doc=gatepass';
         ?>
         <div class="driver-job-card">

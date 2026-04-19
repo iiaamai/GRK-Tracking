@@ -52,6 +52,18 @@ function e(?string $s): string
 }
 
 /**
+ * Format an amount in Philippine Pesos (PHP). Returns an em dash when null.
+ */
+function format_php_money(?float $amount): string
+{
+    if ($amount === null) {
+        return '—';
+    }
+
+    return '₱' . number_format($amount, 2, '.', ',');
+}
+
+/**
  * Flash message (one-shot) for form feedback.
  */
 function flash_set(string $key, string $message): void

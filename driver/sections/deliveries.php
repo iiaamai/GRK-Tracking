@@ -23,9 +23,8 @@ $del = repo_driver_deliveries((int) $u['id']);
           $vehicleType = (string) ($b['vehicle_type'] ?? '—');
           $dtVal = (string) ($b['booking_datetime'] ?? '');
 
-          $payout = $b['payout'] ?? null;
-          $expectedPayout = $payout === null ? 5200.0 : (float) $payout;
-          $payoutStr = '$' . number_format($expectedPayout, 0);
+          $payoutVal = $b['payout'] ?? null;
+          $payoutStr = format_php_money($payoutVal !== null ? (float) $payoutVal : null);
 
           $status = (string) ($b['status'] ?? '');
           $bn = (string) ($b['booking_number'] ?? '');

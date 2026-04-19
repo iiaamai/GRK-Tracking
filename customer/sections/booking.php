@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 $u = auth_user();
 $dt = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y-m-d\TH:i');
+$vehiclePayouts = booking_vehicle_payouts_map();
 ?>
 <div class="card">
   <h2>Request a truck</h2>
@@ -27,11 +28,9 @@ $dt = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y
         <label for="vehicle_type">Vehicle type *</label>
         <select id="vehicle_type" name="vehicle_type" required>
           <option value="">Select…</option>
-          <option>6-wheeler (Isuzu / Fuso)</option>
-          <option>4-wheeler truck</option>
-          <option>L300 van</option>
-          <option>2-wheeler (express)</option>
-          <option>Reefer / specialized</option>
+          <?php foreach ($vehiclePayouts as $label => $amount): ?>
+            <option value="<?= e($label) ?>" data-payout="<?= e((string) $amount) ?>"><?= e($label) ?></option>
+          <?php endforeach; ?>
         </select>
       </div>
       <div class="form-row">
@@ -55,6 +54,37 @@ $dt = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y
       <label for="additional_requirements">Additional requirements</label>
       <textarea id="additional_requirements" name="additional_requirements" maxlength="2000" placeholder="Liftgate, tail lift, documents…"></textarea>
     </div>
+    <div class="booking-payout-summary" id="booking-payout-summary" aria-live="polite">
+      <div class="booking-payout-summary__label">Estimated payout (Philippine Peso)</div>
+      <div class="booking-payout-summary__value" id="booking-payout-value">Select a vehicle type to see the amount.</div>
+    </div>
     <button type="submit" class="btn btn--primary">Submit booking</button>
   </form>
 </div>
+<script>
+(function () {
+  var sel = document.getElementById('vehicle_type');
+  var out = document.getElementById('booking-payout-value');
+  if (!sel || !out) return;
+  function formatPhp(n) {
+    try {
+      return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(n);
+    } catch (e) {
+      return '₱' + Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+  }
+  function update() {
+    var opt = sel.options[sel.selectedIndex];
+    var raw = opt && opt.getAttribute('data-payout');
+    if (!raw || raw === '') {
+      out.textContent = 'Select a vehicle type to see the amount.';
+      out.classList.remove('is-amount');
+      return;
+    }
+    out.textContent = formatPhp(parseFloat(raw));
+    out.classList.add('is-amount');
+  }
+  sel.addEventListener('change', update);
+  update();
+})();
+</script>

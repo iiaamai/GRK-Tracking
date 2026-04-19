@@ -32,6 +32,12 @@ if ($name === '' || $email === '' || $mobile === '' || $vehicle_type === '' || $
     redirect(BASE_URL . '/customer/dashboard.php?section=booking');
 }
 
+$payout = booking_payout_for_vehicle_type($vehicle_type);
+if ($payout === null) {
+    flash_set('error', 'Please choose a valid vehicle type.');
+    redirect(BASE_URL . '/customer/dashboard.php?section=booking');
+}
+
 $now = new DateTimeImmutable('now', new DateTimeZone('Asia/Manila'));
 $row = [
     'booking_number' => repo_next_booking_number(),
@@ -49,7 +55,7 @@ $row = [
     'additional_requirements' => $additional,
     'status' => 'pending',
     'driver_id' => null,
-    'payout' => null,
+    'payout' => $payout,
     'gatepass_image' => null,
     'eir_image' => null,
 ];

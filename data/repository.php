@@ -15,14 +15,19 @@ function repo_init(): void
 function repo_map_booking_row(array $row): array
 {
     $row['customer_id'] = (int) $row['customer_id'];
+    $row['user_id'] = isset($row['user_id']) && $row['user_id'] !== null && $row['user_id'] !== ''
+        ? (int) $row['user_id'] : null;
     $row['driver_id'] = isset($row['driver_id']) && $row['driver_id'] !== null && $row['driver_id'] !== ''
         ? (int) $row['driver_id'] : null;
+    $row['vehicle_id'] = isset($row['vehicle_id']) && $row['vehicle_id'] !== null && $row['vehicle_id'] !== ''
+        ? (int) $row['vehicle_id'] : null;
+    $row['is_locked'] = (bool) ($row['is_locked'] ?? false);
+    $row['accepted_at'] = isset($row['accepted_at']) && $row['accepted_at'] !== null && $row['accepted_at'] !== ''
+        ? (string) $row['accepted_at'] : null;
     $row['payout'] = isset($row['payout']) && $row['payout'] !== null && $row['payout'] !== ''
         ? (float) $row['payout'] : null;
     $row['gatepass_image'] = isset($row['gatepass_image']) && $row['gatepass_image'] !== null && $row['gatepass_image'] !== ''
         ? (string) $row['gatepass_image'] : null;
-    $row['eir_image'] = isset($row['eir_image']) && $row['eir_image'] !== null && $row['eir_image'] !== ''
-        ? (string) $row['eir_image'] : null;
 
     return $row;
 }
@@ -38,6 +43,9 @@ function repo_map_driver_row(array $row): array
 {
     $row['id'] = (int) $row['id'];
     $row['capacity_kg'] = (int) $row['capacity_kg'];
+    $row['status'] = (string) ($row['status'] ?? 'uncleared');
+    $row['last_cleared_at'] = isset($row['last_cleared_at']) && $row['last_cleared_at'] !== null && $row['last_cleared_at'] !== ''
+        ? (string) $row['last_cleared_at'] : null;
 
     return $row;
 }
@@ -97,17 +105,17 @@ function repo_upsert_booking_row(array $b): void
     $pdo = db();
     $sql = <<<'SQL'
 INSERT INTO bookings (
-  booking_number, customer_id, username, name, email, mobile,
+  booking_number, customer_id, user_id, username, name, email, mobile,
   booking_datetime, posting_date, vehicle_type, pickup, dropoff,
-  cargo_desc, additional_requirements, status, driver_id, payout,
-  gatepass_image, eir_image
+  cargo_desc, additional_requirements, status, driver_id, vehicle_id, is_locked, accepted_at, payout,
+  gatepass_image
 ) VALUES (
-  ?,?,?,?,?,?,
-  ?,?,?,?,?,
-  ?,?,?,?,?,
-  ?,?
+  ?,?,?,?,?,?,?,  -- booking_number..mobile (7)
+  ?,?,?,?,?,?,    -- booking_datetime..dropoff (6) => 13
+  ?,?,?,?,?,?,?,? -- cargo_desc..payout (8) => 21
 ) ON DUPLICATE KEY UPDATE
   customer_id = VALUES(customer_id),
+  user_id = VALUES(user_id),
   username = VALUES(username),
   name = VALUES(name),
   email = VALUES(email),
@@ -121,18 +129,24 @@ INSERT INTO bookings (
   additional_requirements = VALUES(additional_requirements),
   status = VALUES(status),
   driver_id = VALUES(driver_id),
+  vehicle_id = VALUES(vehicle_id),
+  is_locked = VALUES(is_locked),
+  accepted_at = VALUES(accepted_at),
   payout = VALUES(payout),
-  gatepass_image = VALUES(gatepass_image),
-  eir_image = VALUES(eir_image)
+  gatepass_image = VALUES(gatepass_image)
 SQL;
     $stmt = $pdo->prepare($sql);
+    $userId = $b['user_id'] ?? null;
     $driverId = $b['driver_id'] ?? null;
+    $vehicleId = $b['vehicle_id'] ?? null;
+    $isLocked = (bool) ($b['is_locked'] ?? false);
+    $acceptedAt = $b['accepted_at'] ?? null;
     $payout = $b['payout'] ?? null;
     $gate = $b['gatepass_image'] ?? null;
-    $eir = $b['eir_image'] ?? null;
     $stmt->execute([
         $b['booking_number'] ?? '',
         (int) ($b['customer_id'] ?? 0),
+        $userId !== null ? (int) $userId : (int) ($b['customer_id'] ?? 0),
         (string) ($b['username'] ?? ''),
         (string) ($b['name'] ?? ''),
         (string) ($b['email'] ?? ''),
@@ -146,16 +160,18 @@ SQL;
         (string) ($b['additional_requirements'] ?? ''),
         (string) ($b['status'] ?? 'pending'),
         $driverId !== null ? (int) $driverId : null,
+        $vehicleId !== null ? (int) $vehicleId : null,
+        $isLocked ? 1 : 0,
+        $acceptedAt !== null && $acceptedAt !== '' ? (string) $acceptedAt : null,
         $payout !== null ? (string) $payout : null,
         $gate !== null && $gate !== '' ? (string) $gate : null,
-        $eir !== null && $eir !== '' ? (string) $eir : null,
     ]);
 }
 
 function repo_fleet(): array
 {
     $pdo = db();
-    $stmt = $pdo->query('SELECT * FROM fleet ORDER BY id ASC');
+    $stmt = $pdo->query('SELECT id, label, type, plate_number AS plate, capacity_kg, status, updated_at FROM vehicles ORDER BY id ASC');
     $out = [];
     foreach ($stmt->fetchAll() as $row) {
         $out[] = repo_map_fleet_row($row);
@@ -176,10 +192,10 @@ function repo_save_fleet(array $fleet): void
     $pdo->beginTransaction();
     try {
         if ($ids === []) {
-            $pdo->exec('DELETE FROM fleet');
+            $pdo->exec('DELETE FROM vehicles');
         } else {
             $ph = implode(',', array_fill(0, count($ids), '?'));
-            $stmt = $pdo->prepare("DELETE FROM fleet WHERE id NOT IN ($ph)");
+            $stmt = $pdo->prepare("DELETE FROM vehicles WHERE id NOT IN ($ph)");
             $stmt->execute($ids);
         }
         foreach ($fleet as $v) {
@@ -196,21 +212,21 @@ function repo_upsert_fleet_row(array $v): void
 {
     $pdo = db();
     $sql = <<<'SQL'
-INSERT INTO fleet (id, label, type, plate, capacity_kg, status)
+INSERT INTO vehicles (id, plate_number, label, type, capacity_kg, status)
 VALUES (?, ?, ?, ?, ?, ?)
 ON DUPLICATE KEY UPDATE
+  plate_number = VALUES(plate_number),
   label = VALUES(label),
   type = VALUES(type),
-  plate = VALUES(plate),
   capacity_kg = VALUES(capacity_kg),
   status = VALUES(status)
 SQL;
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
         (int) ($v['id'] ?? 0),
+        (string) ($v['plate'] ?? ($v['plate_number'] ?? '')),
         (string) ($v['label'] ?? ''),
         (string) ($v['type'] ?? ''),
-        (string) ($v['plate'] ?? ''),
         (int) ($v['capacity_kg'] ?? 0),
         (string) ($v['status'] ?? 'available'),
     ]);
@@ -293,8 +309,11 @@ function repo_driver_jobs_available(): array
 {
     $pdo = db();
     $stmt = $pdo->query(
-        "SELECT * FROM bookings WHERE status = 'ready_for_assignment'
-         AND gatepass_image IS NOT NULL AND gatepass_image <> ''
+        "SELECT * FROM bookings
+         WHERE status = 'pending'
+           AND (is_locked = 0 OR is_locked IS NULL)
+           AND driver_id IS NULL
+           AND gatepass_image IS NOT NULL AND gatepass_image <> ''
          ORDER BY booking_datetime ASC"
     );
     $out = [];
@@ -309,7 +328,7 @@ function repo_driver_deliveries(int $driverId): array
 {
     $pdo = db();
     $stmt = $pdo->prepare(
-        "SELECT * FROM bookings WHERE driver_id = ? AND status IN ('assigned','in_transit') ORDER BY booking_datetime ASC"
+        "SELECT * FROM bookings WHERE driver_id = ? AND status IN ('accepted','in_transit') ORDER BY booking_datetime ASC"
     );
     $stmt->execute([$driverId]);
     $out = [];
@@ -329,6 +348,150 @@ function repo_driver_earnings(int $driverId): float
     $stmt->execute([$driverId]);
 
     return (float) $stmt->fetchColumn();
+}
+
+function repo_driver_completed_deliveries_count(int $driverId): int
+{
+    $pdo = db();
+    $stmt = $pdo->prepare(
+        "SELECT COUNT(*) FROM bookings WHERE driver_id = ? AND status = 'completed'"
+    );
+    $stmt->execute([$driverId]);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function repo_normalize_vehicle_type_to_fleet_type(string $vehicleType): string
+{
+    $v = strtolower(trim($vehicleType));
+    if ($v === '') {
+        return '';
+    }
+    if (str_contains($v, 'reefer')) {
+        return 'Reefer / specialized';
+    }
+    if (str_contains($v, 'l300')) {
+        return 'L300';
+    }
+    if (str_contains($v, '4-wheeler') || str_contains($v, '4 wheeler')) {
+        return '4-wheeler';
+    }
+    if (str_contains($v, '6-wheeler') || str_contains($v, '6 wheeler')) {
+        return '6-wheeler';
+    }
+
+    return trim($vehicleType);
+}
+
+function repo_available_vehicles_count_for_booking_vehicle_type(string $bookingVehicleType): int
+{
+    $type = repo_normalize_vehicle_type_to_fleet_type($bookingVehicleType);
+    if ($type === '') {
+        return 0;
+    }
+    $pdo = db();
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM vehicles WHERE type = ? AND status = 'available'");
+    $stmt->execute([$type]);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function repo_vehicle_status_by_plate_number(string $plateNumber): ?string
+{
+    $plateNumber = trim($plateNumber);
+    if ($plateNumber === '') {
+        return null;
+    }
+    $stmt = db()->prepare('SELECT status FROM vehicles WHERE plate_number = ? LIMIT 1');
+    $stmt->execute([$plateNumber]);
+    $st = $stmt->fetchColumn();
+    if ($st === false || $st === null) {
+        return null;
+    }
+
+    return (string) $st;
+}
+
+/**
+ * @return array{total_earnings:float,total_bookings:int,total_maintenance_vehicles:int,date_range_start:string,date_range_end:string}
+ */
+function repo_admin_earnings_summary_for_range(string $startYmd, string $endYmd): array
+{
+    $startYmd = trim($startYmd);
+    $endYmd = trim($endYmd);
+    if ($startYmd === '' || $endYmd === '') {
+        $startYmd = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y-m-d');
+        $endYmd = $startYmd;
+    }
+
+    // Bookings: use booking_datetime date part.
+    $pdo = db();
+    $stmt = $pdo->prepare(
+        "SELECT
+           COALESCE(SUM(payout), 0) AS total_earnings,
+           COUNT(*) AS total_bookings
+         FROM bookings
+         WHERE status = 'completed'
+           AND DATE(booking_datetime) BETWEEN ? AND ?"
+    );
+    $stmt->execute([$startYmd, $endYmd]);
+    $row = $stmt->fetch();
+    $earnings = is_array($row) ? (float) ($row['total_earnings'] ?? 0) : 0.0;
+    $bookings = is_array($row) ? (int) ($row['total_bookings'] ?? 0) : 0;
+
+    $stmt2 = $pdo->query("SELECT COUNT(*) FROM vehicles WHERE status = 'maintenance'");
+    $maint = (int) $stmt2->fetchColumn();
+
+    return [
+        'total_earnings' => $earnings,
+        'total_bookings' => $bookings,
+        'total_maintenance_vehicles' => $maint,
+        'date_range_start' => $startYmd,
+        'date_range_end' => $endYmd,
+    ];
+}
+
+/**
+ * @return array<int, array<string, mixed>>
+ */
+function repo_completed_deliveries_for_range(string $startYmd, string $endYmd): array
+{
+    $startYmd = trim($startYmd);
+    $endYmd = trim($endYmd);
+    if ($startYmd === '' || $endYmd === '') {
+        return [];
+    }
+
+    $pdo = db();
+    $stmt = $pdo->prepare(
+        "SELECT
+           id,
+           booking_number,
+           customer_id,
+           user_id,
+           username,
+           name,
+           email,
+           mobile,
+           booking_datetime,
+           posting_date,
+           vehicle_type,
+           pickup,
+           dropoff,
+           status,
+           driver_id,
+           vehicle_id,
+           accepted_at,
+           payout
+         FROM bookings
+         WHERE status = 'completed'
+           AND DATE(booking_datetime) BETWEEN ? AND ?
+         ORDER BY booking_datetime ASC, id ASC"
+    );
+    $stmt->execute([$startYmd, $endYmd]);
+    $rows = $stmt->fetchAll();
+
+    return is_array($rows) ? $rows : [];
 }
 
 function repo_add_fleet_row(array $row): void
@@ -390,6 +553,27 @@ SQL;
         (string) ($r['name'] ?? ''),
         (string) ($r['mobile'] ?? ''),
     ]);
+
+    // Keep `users` aligned with `customers` (same id).
+    $sql2 = <<<'SQL'
+INSERT INTO users (id, name, email, username, password, mobile)
+VALUES (?, ?, ?, ?, ?, ?)
+ON DUPLICATE KEY UPDATE
+  name = VALUES(name),
+  email = VALUES(email),
+  username = VALUES(username),
+  password = VALUES(password),
+  mobile = VALUES(mobile)
+SQL;
+    $stmt2 = $pdo->prepare($sql2);
+    $stmt2->execute([
+        (int) ($r['id'] ?? 0),
+        (string) ($r['name'] ?? ''),
+        (string) ($r['email'] ?? ''),
+        (string) ($r['username'] ?? ''),
+        (string) ($r['password'] ?? ''),
+        (string) ($r['mobile'] ?? ''),
+    ]);
 }
 
 function repo_save_customers(array $rows): void
@@ -426,17 +610,40 @@ function repo_save_customers(array $rows): void
 function repo_insert_customer(string $username, string $email, string $password, string $name, string $mobile): void
 {
     $pdo = db();
-    $stmt = $pdo->prepare(
-        'INSERT INTO customers (username, email, password, name, mobile) VALUES (?,?,?,?,?)'
-    );
-    $stmt->execute([$username, $email, $password, $name, $mobile]);
+    $pdo->beginTransaction();
+    try {
+        $stmt = $pdo->prepare(
+            'INSERT INTO customers (username, email, password, name, mobile) VALUES (?,?,?,?,?)'
+        );
+        $stmt->execute([$username, $email, $password, $name, $mobile]);
+        $id = (int) $pdo->lastInsertId();
+
+        $stmt2 = $pdo->prepare(
+            'INSERT INTO users (id, name, email, username, password, mobile) VALUES (?,?,?,?,?,?)'
+        );
+        $stmt2->execute([$id, $name, $email, $username, $password, $mobile]);
+
+        $pdo->commit();
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
 }
 
 function repo_update_customer_profile(int $id, string $name, string $email, string $mobile): void
 {
     $pdo = db();
-    $stmt = $pdo->prepare('UPDATE customers SET name = ?, email = ?, mobile = ? WHERE id = ?');
-    $stmt->execute([$name, $email, $mobile, $id]);
+    $pdo->beginTransaction();
+    try {
+        $stmt = $pdo->prepare('UPDATE customers SET name = ?, email = ?, mobile = ? WHERE id = ?');
+        $stmt->execute([$name, $email, $mobile, $id]);
+        $stmt2 = $pdo->prepare('UPDATE users SET name = ?, email = ?, mobile = ? WHERE id = ?');
+        $stmt2->execute([$name, $email, $mobile, $id]);
+        $pdo->commit();
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
 }
 
 function repo_drivers(): array

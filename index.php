@@ -43,7 +43,7 @@ $logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
     <section class="landing__grid">
       <div class="landing-card">
         <h3>Fleet</h3>
-        <p>6-wheelers, 4-wheelers, L300 vans, and 2-wheeler support for dense city legs.</p>
+        <p>6-wheelers, 4-wheelers, and L300 vans for dense city legs.</p>
       </div>
       <div class="landing-card">
         <h3>Live flow</h3>

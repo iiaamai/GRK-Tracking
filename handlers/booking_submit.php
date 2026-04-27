@@ -38,10 +38,17 @@ if ($payout === null) {
     redirect(BASE_URL . '/customer/dashboard.php?section=booking');
 }
 
+$available = repo_available_vehicles_count_for_booking_vehicle_type($vehicle_type);
+if ($available <= 0) {
+    flash_set('error', 'No available vehicles for the selected vehicle type right now. Please choose a different type or try again later.');
+    redirect(BASE_URL . '/customer/dashboard.php?section=booking');
+}
+
 $now = new DateTimeImmutable('now', new DateTimeZone('Asia/Manila'));
 $row = [
     'booking_number' => repo_next_booking_number(),
     'customer_id' => (int) $u['id'],
+    'user_id' => (int) $u['id'],
     'username' => (string) $u['username'],
     'name' => $name,
     'email' => $email,
@@ -55,9 +62,11 @@ $row = [
     'additional_requirements' => $additional,
     'status' => 'pending',
     'driver_id' => null,
+    'vehicle_id' => null,
+    'is_locked' => false,
+    'accepted_at' => null,
     'payout' => $payout,
     'gatepass_image' => null,
-    'eir_image' => null,
 ];
 
 repo_add_booking($row);

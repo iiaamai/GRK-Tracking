@@ -28,7 +28,7 @@ $u = auth_user();
         <select id="vehicle_type" name="vehicle_type" required>
           <?php
           $vt = (string) ($u['vehicle_type'] ?? '');
-          $opts = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', '2-wheeler (express)', 'Reefer / specialized'];
+          $opts = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', 'Reefer / specialized'];
           foreach ($opts as $o) {
               $sel = $o === $vt ? ' selected' : '';
               echo '<option' . $sel . '>' . htmlspecialchars($o, ENT_QUOTES, 'UTF-8') . '</option>';

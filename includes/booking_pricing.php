@@ -10,7 +10,6 @@ function booking_vehicle_payouts_map(): array
         '6-wheeler (Isuzu / Fuso)' => 14500.00,
         '4-wheeler truck' => 9200.00,
         'L300 van' => 4500.00,
-        '2-wheeler (express)' => 1200.00,
         'Reefer / specialized' => 18500.00,
     ];
 }

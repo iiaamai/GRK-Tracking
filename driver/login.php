@@ -10,7 +10,7 @@ if (auth_user() && (auth_user()['role'] ?? '') === 'driver') {
 
 $err = flash_get('error');
 $ok = flash_get('success');
-$vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', '2-wheeler (express)', 'Reefer / specialized'];
+$vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', 'Reefer / specialized'];
 ?>
 <!DOCTYPE html>
 <html lang="en">

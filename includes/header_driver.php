@@ -30,7 +30,6 @@ $logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
         <a href="<?= e($base . '?section=overview') ?>" class="<?= $section === 'overview' ? 'is-active' : '' ?>">Overview</a>
         <a href="<?= e($base . '?section=jobs') ?>" class="<?= $section === 'jobs' ? 'is-active' : '' ?>">Available Jobs</a>
         <a href="<?= e($base . '?section=deliveries') ?>" class="<?= $section === 'deliveries' ? 'is-active' : '' ?>">My Deliveries</a>
-        <a href="<?= e($base . '?section=earnings') ?>" class="<?= $section === 'earnings' ? 'is-active' : '' ?>">Earnings</a>
         <a href="<?= e($base . '?section=profile') ?>" class="<?= $section === 'profile' ? 'is-active' : '' ?>">Profile</a>
       </nav>
       <div class="sidebar__foot">

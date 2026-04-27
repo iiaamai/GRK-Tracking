@@ -28,6 +28,7 @@ $logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
       </div>
       <nav class="sidebar__nav" aria-label="Admin">
         <a href="<?= e($base . '?section=overview') ?>" class="<?= $section === 'overview' ? 'is-active' : '' ?>">Overview</a>
+        <a href="<?= e($base . '?section=earnings_reports') ?>" class="<?= $section === 'earnings_reports' ? 'is-active' : '' ?>">Earnings & Reports</a>
         <a href="<?= e($base . '?section=bookings') ?>" class="<?= $section === 'bookings' ? 'is-active' : '' ?>">All Bookings</a>
         <a href="<?= e($base . '?section=drivers') ?>" class="<?= $section === 'drivers' ? 'is-active' : '' ?>">Drivers</a>
         <a href="<?= e($base . '?section=customers') ?>" class="<?= $section === 'customers' ? 'is-active' : '' ?>">Customers</a>

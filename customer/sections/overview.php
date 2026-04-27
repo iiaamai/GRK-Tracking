@@ -24,7 +24,7 @@ $active = count(array_filter($mine, static fn ($b) => in_array($b['status'] ?? '
 <div class="card">
   <h2>Welcome, <?= e((string) $u['name']) ?></h2>
   <p style="margin:0;color:var(--muted);font-size:0.95rem;">
-    Book 6-wheelers, 4-wheelers, L300 vans, or 2-wheeler support for pallets and container-scale loads.
+    Book 6-wheelers, 4-wheelers, or L300 vans for pallets and container-scale loads.
     New bookings appear instantly for drivers under <strong>Available Jobs</strong>.
   </p>
 </div>

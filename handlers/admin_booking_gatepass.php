@@ -40,12 +40,9 @@ if ($old !== null && $old !== '' && str_starts_with($old, 'uploads/bookings/')) 
 
 repo_update_booking($bn, static function (array $b) use ($path) {
     $b['gatepass_image'] = $path;
-    if (($b['status'] ?? '') === 'pending') {
-        $b['status'] = 'ready_for_assignment';
-    }
 
     return $b;
 });
 
-flash_set('success', 'Gate pass uploaded. Booking is now ready for driver assignment.');
+flash_set('success', 'Gate pass uploaded. Booking is now available for driver acceptance.');
 redirect(BASE_URL . '/admin/dashboard.php?section=bookings');

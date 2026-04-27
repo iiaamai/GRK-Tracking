@@ -26,7 +26,14 @@ if ($b === null) {
 
 $role = (string) ($u['role'] ?? '');
 $status = (string) ($b['status'] ?? '');
-$path = $doc === 'gatepass' ? (string) ($b['gatepass_image'] ?? '') : (string) ($b['eir_image'] ?? '');
+$path = '';
+if ($doc === 'gatepass') {
+    $path = (string) ($b['gatepass_image'] ?? '');
+} else {
+    $stmt = db()->prepare('SELECT eir_file FROM eir WHERE booking_id = ? LIMIT 1');
+    $stmt->execute([(int) ($b['id'] ?? 0)]);
+    $path = (string) ($stmt->fetchColumn() ?: '');
+}
 
 if ($path === '') {
     header('HTTP/1.1 404 Not Found');
@@ -37,14 +44,21 @@ if ($path === '') {
 if ($role === 'admin') {
     // Admin can view both.
 } elseif ($role === 'driver') {
-    if ($doc !== 'gatepass') {
-        header('HTTP/1.1 403 Forbidden');
-        exit('Forbidden');
-    }
-    // Drivers may preview gate pass before accepting (ready_for_assignment) or during active runs.
-    if (!in_array($status, ['ready_for_assignment', 'assigned', 'in_transit', 'completed'], true)) {
-        header('HTTP/1.1 403 Forbidden');
-        exit('Forbidden');
+    if ($doc === 'eir') {
+        if ((int) ($b['driver_id'] ?? 0) !== (int) ($u['id'] ?? 0)) {
+            header('HTTP/1.1 403 Forbidden');
+            exit('Forbidden');
+        }
+        if (!in_array($status, ['in_transit', 'completed'], true)) {
+            header('HTTP/1.1 403 Forbidden');
+            exit('Forbidden');
+        }
+    } else {
+        // Drivers may preview gate pass before accepting (pending) or during active runs.
+        if (!in_array($status, ['pending', 'accepted', 'in_transit', 'completed'], true)) {
+            header('HTTP/1.1 403 Forbidden');
+            exit('Forbidden');
+        }
     }
 } elseif ($role === 'customer') {
     if ($doc !== 'eir') {

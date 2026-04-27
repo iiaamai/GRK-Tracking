@@ -30,7 +30,12 @@ $del = repo_driver_deliveries((int) $u['id']);
           $bn = (string) ($b['booking_number'] ?? '');
           $gpLink = BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=gatepass';
           $eirLink = BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir';
-          $hasEir = (string) ($b['eir_image'] ?? '') !== '';
+  $hasEir = false;
+  if (isset($b['id'])) {
+    $stmt = db()->prepare('SELECT 1 FROM eir WHERE booking_id = ? LIMIT 1');
+    $stmt->execute([(int) $b['id']]);
+    $hasEir = (bool) $stmt->fetchColumn();
+  }
         ?>
         <div class="driver-job-card">
           <div class="driver-job-card__head">
@@ -68,7 +73,7 @@ $del = repo_driver_deliveries((int) $u['id']);
             <?php endif; ?>
           </div>
 
-          <?php if (in_array($status, ['assigned', 'in_transit'], true) && !$hasEir): ?>
+          <?php if ($status === 'in_transit' && !$hasEir): ?>
             <form
               class="driver-job-card__eirForm"
               method="post"
@@ -86,7 +91,7 @@ $del = repo_driver_deliveries((int) $u['id']);
           <?php endif; ?>
 
           <div class="driver-job-card__cta">
-            <?php if ($status === 'assigned'): ?>
+            <?php if ($status === 'accepted'): ?>
               <form method="post" action="<?= e(BASE_URL . '/handlers/driver_update_delivery.php') ?>" style="margin:0">
                 <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
                 <input type="hidden" name="action" value="in_transit">

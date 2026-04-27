@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 $fleet = repo_fleet();
-$types = ['6-wheeler', '4-wheeler', 'L300', '2-wheeler', 'Reefer / specialized', 'Other'];
+$types = ['6-wheeler', '4-wheeler', 'L300', 'Reefer / specialized', 'Other'];
 $st = ['available', 'in_use', 'maintenance'];
 ?>
 <div class="card">
@@ -49,8 +49,32 @@ $st = ['available', 'in_use', 'maintenance'];
   <?php if (!$fleet): ?>
     <p style="color:var(--muted)">No vehicles.</p>
   <?php else: ?>
+    <div class="grid grid--2" style="margin-bottom:0.75rem">
+      <div class="form-row" style="margin:0">
+        <label for="fleet_q">Search</label>
+        <input id="fleet_q" placeholder="Search label / plate / type / status">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label for="fleet_status">Status</label>
+        <select id="fleet_status">
+          <option value="">All</option>
+          <?php foreach ($st as $s): ?>
+            <option value="<?= e($s) ?>"><?= e($s) ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div class="form-row" style="margin:0">
+        <label for="fleet_type_filter">Type</label>
+        <select id="fleet_type_filter">
+          <option value="">All</option>
+          <?php foreach ($types as $t): ?>
+            <option value="<?= e($t) ?>"><?= e($t) ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+    </div>
     <div class="table-wrap">
-      <table>
+      <table id="fleet_table">
         <thead>
           <tr>
             <th>ID</th>
@@ -62,7 +86,15 @@ $st = ['available', 'in_use', 'maintenance'];
         <tbody>
           <?php foreach ($fleet as $v): ?>
             <tr>
-              <td><?= (int) ($v['id'] ?? 0) ?></td>
+              <?php
+                $rowText = strtolower(trim(
+                  (string) ($v['label'] ?? '') . ' ' .
+                  (string) ($v['plate'] ?? '') . ' ' .
+                  (string) ($v['type'] ?? '') . ' ' .
+                  (string) ($v['status'] ?? '')
+                ));
+              ?>
+              <td data-search="<?= e($rowText) ?>" data-status="<?= e((string) ($v['status'] ?? '')) ?>" data-type="<?= e((string) ($v['type'] ?? '')) ?>"><?= (int) ($v['id'] ?? 0) ?></td>
               <td><?= e($v['label'] ?? '') ?></td>
               <td>
                 <form method="post" action="<?= e(BASE_URL . '/handlers/admin_fleet_action.php') ?>" style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:flex-end;margin:0">
@@ -113,3 +145,33 @@ $st = ['available', 'in_use', 'maintenance'];
     </div>
   <?php endif; ?>
 </div>
+
+<script>
+(function () {
+  var q = document.getElementById('fleet_q');
+  var st = document.getElementById('fleet_status');
+  var ty = document.getElementById('fleet_type_filter');
+  var table = document.getElementById('fleet_table');
+  if (!q || !st || !ty || !table) return;
+  var rows = table.querySelectorAll('tbody tr');
+  function apply() {
+    var term = (q.value || '').toLowerCase().trim();
+    var status = (st.value || '').toLowerCase().trim();
+    var type = (ty.value || '').toLowerCase().trim();
+    rows.forEach(function (tr) {
+      var cell = tr.querySelector('td[data-search]');
+      var hay = cell ? (cell.getAttribute('data-search') || '') : '';
+      var rowStatus = cell ? (cell.getAttribute('data-status') || '') : '';
+      var rowType = cell ? (cell.getAttribute('data-type') || '') : '';
+      var ok = true;
+      if (term) ok = ok && hay.indexOf(term) !== -1;
+      if (status) ok = ok && rowStatus === status;
+      if (type) ok = ok && rowType === type;
+      tr.style.display = ok ? '' : 'none';
+    });
+  }
+  q.addEventListener('input', apply);
+  st.addEventListener('change', apply);
+  ty.addEventListener('change', apply);
+})();
+</script>

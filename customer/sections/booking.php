@@ -4,11 +4,18 @@ declare(strict_types=1);
 $u = auth_user();
 $dt = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y-m-d\TH:i');
 $vehiclePayouts = booking_vehicle_payouts_map();
+$avail = [];
+foreach (array_keys($vehiclePayouts) as $label) {
+    $avail[$label] = repo_available_vehicles_count_for_booking_vehicle_type((string) $label);
+}
 ?>
 <div class="card">
   <h2>Request a truck</h2>
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
     Your request is saved as <span class="badge badge--pending">pending</span> until an administrator reviews it and uploads a <strong>gate pass</strong>. Only then can a driver accept the job.
+  </p>
+  <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
+    Availability is based on Fleet Management units marked <strong>available</strong>.
   </p>
   <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/booking_submit.php') ?>" novalidate>
     <div class="grid grid--2">
@@ -29,7 +36,8 @@ $vehiclePayouts = booking_vehicle_payouts_map();
         <select id="vehicle_type" name="vehicle_type" required>
           <option value="">Select…</option>
           <?php foreach ($vehiclePayouts as $label => $amount): ?>
-            <option value="<?= e($label) ?>" data-payout="<?= e((string) $amount) ?>"><?= e($label) ?></option>
+            <?php $n = (int) ($avail[$label] ?? 0); ?>
+            <option value="<?= e($label) ?>" data-payout="<?= e((string) $amount) ?>"><?= e($label) ?> (<?= $n ?> available)</option>
           <?php endforeach; ?>
         </select>
       </div>

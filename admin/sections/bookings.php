@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 $rows = repo_bookings();
-$statuses = ['pending', 'ready_for_assignment', 'assigned', 'in_transit', 'completed', 'cancelled'];
+$statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
 ?>
 <div class="card">
   <h2>All bookings</h2>
@@ -12,8 +12,23 @@ $statuses = ['pending', 'ready_for_assignment', 'assigned', 'in_transit', 'compl
   <?php if (!$rows): ?>
     <p style="color:var(--muted)">No bookings.</p>
   <?php else: ?>
+    <div class="grid grid--2" style="margin-bottom:0.75rem">
+      <div class="form-row" style="margin:0">
+        <label for="bookings_q">Search</label>
+        <input id="bookings_q" placeholder="Search booking # / customer / route / status">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label for="bookings_status">Status</label>
+        <select id="bookings_status">
+          <option value="">All</option>
+          <?php foreach ($statuses as $s): ?>
+            <option value="<?= e($s) ?>"><?= e($s) ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+    </div>
     <div class="table-wrap">
-      <table>
+      <table id="bookings_table">
         <thead>
           <tr>
             <th>Booking #</th>
@@ -30,8 +45,15 @@ $statuses = ['pending', 'ready_for_assignment', 'assigned', 'in_transit', 'compl
         <tbody>
           <?php foreach ($rows as $row): ?>
             <tr>
-              <td><?= e($row['booking_number'] ?? '') ?></td>
-              <td><?= e($row['name'] ?? '') ?></td>
+              <?php
+                $bn = (string) ($row['booking_number'] ?? '');
+                $cust = (string) ($row['name'] ?? '');
+                $route = (string) ($row['pickup'] ?? '') . ' ' . (string) ($row['dropoff'] ?? '');
+                $stVal = (string) ($row['status'] ?? '');
+                $rowText = strtolower(trim($bn . ' ' . $cust . ' ' . $route . ' ' . $stVal));
+              ?>
+              <td data-search="<?= e($rowText) ?>" data-status="<?= e($stVal) ?>"><?= e($bn) ?></td>
+              <td><?= e($cust) ?></td>
               <td><?= e(format_timestamp($row['posting_date'] ?? '', 'M j, Y')) ?></td>
               <td><?= e(format_timestamp($row['booking_datetime'] ?? '')) ?></td>
               <td>
@@ -48,7 +70,6 @@ $statuses = ['pending', 'ready_for_assignment', 'assigned', 'in_transit', 'compl
               <td style="max-width:220px;font-size:0.8rem;vertical-align:top">
                 <?php
                   $gp = (string) ($row['gatepass_image'] ?? '');
-                  $bn = (string) ($row['booking_number'] ?? '');
                   $gpUrl = $gp !== '' ? (BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=gatepass') : '';
                 ?>
                 <?php if ($gpUrl !== ''): ?>
@@ -68,10 +89,15 @@ $statuses = ['pending', 'ready_for_assignment', 'assigned', 'in_transit', 'compl
               </td>
               <td style="max-width:160px;font-size:0.8rem;vertical-align:top">
                 <?php
-                  $eir = (string) ($row['eir_image'] ?? '');
-                  $eirUrl = $eir !== '' ? (BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir') : '';
+                  $eirUrl = (BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir');
+                  $hasEir = false;
+                  if (isset($row['id'])) {
+                    $stmt = db()->prepare('SELECT 1 FROM eir WHERE booking_id = ? LIMIT 1');
+                    $stmt->execute([(int) $row['id']]);
+                    $hasEir = (bool) $stmt->fetchColumn();
+                  }
                 ?>
-                <?php if ($eirUrl !== ''): ?>
+                <?php if ($hasEir): ?>
                   <a href="<?= e($eirUrl) ?>" target="_blank" rel="noopener noreferrer">View EIR</a>
                 <?php else: ?>
                   <span style="color:var(--muted)">—</span>
@@ -92,3 +118,28 @@ $statuses = ['pending', 'ready_for_assignment', 'assigned', 'in_transit', 'compl
     </div>
   <?php endif; ?>
 </div>
+
+<script>
+(function () {
+  var q = document.getElementById('bookings_q');
+  var st = document.getElementById('bookings_status');
+  var table = document.getElementById('bookings_table');
+  if (!q || !st || !table) return;
+  var rows = table.querySelectorAll('tbody tr');
+  function apply() {
+    var term = (q.value || '').toLowerCase().trim();
+    var status = (st.value || '').toLowerCase().trim();
+    rows.forEach(function (tr) {
+      var cell = tr.querySelector('td[data-search]');
+      var hay = cell ? (cell.getAttribute('data-search') || '') : '';
+      var rowStatus = (cell ? (cell.getAttribute('data-status') || '') : '').toLowerCase();
+      var ok = true;
+      if (term) ok = ok && hay.indexOf(term) !== -1;
+      if (status) ok = ok && rowStatus === status;
+      tr.style.display = ok ? '' : 'none';
+    });
+  }
+  q.addEventListener('input', apply);
+  st.addEventListener('change', apply);
+})();
+</script>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 $u = auth_user();
 $jobs = repo_driver_jobs_available();
 $del = repo_driver_deliveries((int) $u['id']);
+$completed = repo_driver_completed_deliveries_count((int) $u['id']);
 ?>
 <div class="grid grid--stats">
   <div class="stat">
@@ -15,8 +16,8 @@ $del = repo_driver_deliveries((int) $u['id']);
     <div class="stat__lbl">Your active deliveries</div>
   </div>
   <div class="stat">
-    <div class="stat__val"><?= number_format(repo_driver_earnings((int) $u['id']), 0) ?> ₱</div>
-    <div class="stat__lbl">Completed earnings (demo)</div>
+    <div class="stat__val"><?= (int) $completed ?></div>
+    <div class="stat__lbl">Total deliveries (completed)</div>
   </div>
 </div>
 

@@ -7,13 +7,14 @@ require_once dirname(__DIR__) . '/includes/auth.php';
 auth_require_role('admin');
 
 $section = $_GET['section'] ?? 'overview';
-$allowed = ['overview', 'bookings', 'drivers', 'customers', 'fleet', 'settings'];
+$allowed = ['overview', 'earnings_reports', 'bookings', 'drivers', 'customers', 'fleet', 'settings'];
 if (!in_array($section, $allowed, true)) {
     $section = 'overview';
 }
 
 $titles = [
     'overview' => 'Overview',
+    'earnings_reports' => 'Earnings & Reports',
     'bookings' => 'All Bookings',
     'drivers' => 'Drivers',
     'customers' => 'Customers',

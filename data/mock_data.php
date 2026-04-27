@@ -27,8 +27,7 @@ function mock_fleet_seed(): array
         ['id' => 1, 'label' => 'Isuzu F-Series 6-wheeler', 'type' => '6-wheeler', 'plate' => 'FUS-1001', 'capacity_kg' => 7500, 'status' => 'available'],
         ['id' => 2, 'label' => 'Fuso Canter 4-wheeler', 'type' => '4-wheeler', 'plate' => 'CAN-2002', 'capacity_kg' => 3500, 'status' => 'in_use'],
         ['id' => 3, 'label' => 'L300 Van', 'type' => 'L300', 'plate' => 'L30-3003', 'capacity_kg' => 1200, 'status' => 'available'],
-        ['id' => 4, 'label' => 'Motorcycle courier', 'type' => '2-wheeler', 'plate' => 'MC-4004', 'capacity_kg' => 50, 'status' => 'maintenance'],
-        ['id' => 5, 'label' => 'Refrigerated 6-wheeler', 'type' => '6-wheeler', 'plate' => 'REF-5005', 'capacity_kg' => 7000, 'status' => 'available'],
+        ['id' => 4, 'label' => 'Refrigerated 6-wheeler', 'type' => '6-wheeler', 'plate' => 'REF-5005', 'capacity_kg' => 7000, 'status' => 'available'],
     ];
 }
 
@@ -38,6 +37,7 @@ function mock_bookings_seed(): array
         [
             'booking_number' => 'EXP-2026-0001',
             'customer_id' => 1,
+            'user_id' => 1,
             'username' => 'acme_corp',
             'name' => 'Acme Trading',
             'email' => 'orders@acme.test',
@@ -49,15 +49,18 @@ function mock_bookings_seed(): array
             'dropoff' => 'Makati CBD',
             'cargo_desc' => 'Palletized goods — 40 pallets',
             'additional_requirements' => 'Liftgate required; morning slot only.',
-            'status' => 'assigned',
+            'status' => 'accepted',
             'driver_id' => 1,
+            'vehicle_id' => 2,
+            'is_locked' => true,
+            'accepted_at' => '2026-03-26 08:00:00',
             'payout' => 5200.0,
             'gatepass_image' => null,
-            'eir_image' => null,
         ],
         [
             'booking_number' => 'EXP-2026-0002',
             'customer_id' => 2,
+            'user_id' => 2,
             'username' => 'metro_retail',
             'name' => 'Metro Retail',
             'email' => 'logistics@metro.test',
@@ -69,11 +72,13 @@ function mock_bookings_seed(): array
             'dropoff' => 'BGC',
             'cargo_desc' => 'Retail cartons — 200 boxes',
             'additional_requirements' => '',
-            'status' => 'ready_for_assignment',
+            'status' => 'pending',
             'driver_id' => null,
+            'vehicle_id' => null,
+            'is_locked' => false,
+            'accepted_at' => null,
             'payout' => null,
             'gatepass_image' => 'uploads/bookings/demo-gatepass.png',
-            'eir_image' => null,
         ],
     ];
 }

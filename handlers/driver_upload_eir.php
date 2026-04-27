@@ -25,8 +25,8 @@ if ($current === null || (int) ($current['driver_id'] ?? 0) !== (int) $u['id']) 
 }
 
 $st = (string) ($current['status'] ?? '');
-if (!in_array($st, ['assigned', 'in_transit'], true)) {
-    flash_set('error', 'EIR can only be uploaded for active deliveries.');
+if ($st !== 'in_transit') {
+    flash_set('error', 'EIR upload is only enabled when the booking is in transit.');
     redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
 }
 
@@ -37,19 +37,25 @@ if ($path === null) {
     redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
 }
 
-$old = $current['eir_image'] ?? null;
-if ($old !== null && $old !== '' && str_starts_with($old, 'uploads/bookings/')) {
-    $full = APP_ROOT . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $old);
+$bid = (int) ($current['id'] ?? 0);
+if ($bid <= 0) {
+    flash_set('error', 'Invalid booking.');
+    redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
+}
+
+$pdo = db();
+$stmt = $pdo->prepare('SELECT eir_file FROM eir WHERE booking_id = ? LIMIT 1');
+$stmt->execute([$bid]);
+$old = (string) ($stmt->fetchColumn() ?: '');
+if ($old !== '' && str_starts_with(str_replace('\\', '/', $old), 'uploads/bookings/')) {
+    $full = APP_ROOT . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, str_replace('\\', '/', $old));
     if (is_file($full)) {
         @unlink($full);
     }
 }
 
-repo_update_booking($bn, static function (array $b) use ($path) {
-    $b['eir_image'] = $path;
-
-    return $b;
-});
+$ins = $pdo->prepare('INSERT INTO eir (booking_id, eir_file) VALUES (?, ?) ON DUPLICATE KEY UPDATE eir_file = VALUES(eir_file), uploaded_at = CURRENT_TIMESTAMP');
+$ins->execute([$bid, $path]);
 
 flash_set('success', 'Equipment Interchange Receipt (EIR) uploaded.');
 redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');

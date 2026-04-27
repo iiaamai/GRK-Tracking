@@ -38,8 +38,12 @@ $rows = repo_customers();
   <?php if (!$rows): ?>
     <p style="color:var(--muted)">No customers.</p>
   <?php else: ?>
+    <div class="form-row" style="margin:0 0 0.75rem">
+      <label for="customers_q">Search customers</label>
+      <input id="customers_q" placeholder="Search username / name / email / mobile">
+    </div>
     <div class="table-wrap">
-      <table>
+      <table id="customers_table">
         <thead>
           <tr>
             <th>ID</th>
@@ -51,7 +55,15 @@ $rows = repo_customers();
         <tbody>
           <?php foreach ($rows as $r): ?>
             <tr>
-              <td><?= (int) ($r['id'] ?? 0) ?></td>
+              <?php
+                $rowText = strtolower(trim(
+                  (string) ($r['username'] ?? '') . ' ' .
+                  (string) ($r['name'] ?? '') . ' ' .
+                  (string) ($r['email'] ?? '') . ' ' .
+                  (string) ($r['mobile'] ?? '')
+                ));
+              ?>
+              <td data-search="<?= e($rowText) ?>"><?= (int) ($r['id'] ?? 0) ?></td>
               <td><?= e($r['username'] ?? '') ?></td>
               <td>
                 <form method="post" action="<?= e(BASE_URL . '/handlers/admin_customer_action.php') ?>" style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:flex-end;margin:0">
@@ -86,3 +98,22 @@ $rows = repo_customers();
     </div>
   <?php endif; ?>
 </div>
+
+<script>
+(function () {
+  var q = document.getElementById('customers_q');
+  var table = document.getElementById('customers_table');
+  if (!q || !table) return;
+  var rows = table.querySelectorAll('tbody tr');
+  function apply() {
+    var term = (q.value || '').toLowerCase().trim();
+    rows.forEach(function (tr) {
+      var cell = tr.querySelector('td[data-search]');
+      var hay = cell ? (cell.getAttribute('data-search') || '') : '';
+      var ok = !term || hay.indexOf(term) !== -1;
+      tr.style.display = ok ? '' : 'none';
+    });
+  }
+  q.addEventListener('input', apply);
+})();
+</script>

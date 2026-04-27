@@ -7,7 +7,7 @@ require_once dirname(__DIR__) . '/includes/auth.php';
 auth_require_role('driver');
 
 $section = $_GET['section'] ?? 'overview';
-$allowed = ['overview', 'jobs', 'deliveries', 'earnings', 'profile'];
+$allowed = ['overview', 'jobs', 'deliveries', 'profile'];
 if (!in_array($section, $allowed, true)) {
     $section = 'overview';
 }
@@ -16,7 +16,6 @@ $titles = [
     'overview' => 'Overview',
     'jobs' => 'Available Jobs',
     'deliveries' => 'My Deliveries',
-    'earnings' => 'Earnings',
     'profile' => 'Profile',
 ];
 $pageTitle = $titles[$section];

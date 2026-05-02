@@ -34,7 +34,7 @@ $vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', 'Reefer / 
       <?php if ($err): ?>
         <div class="flash flash--err"><?= e($err) ?></div>
       <?php endif; ?>
-      <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/login_driver.php') ?>" novalidate>
+      <form class="js-validate" method="post" action="../handlers/login_driver.php" novalidate>
         <div class="form-row">
           <label for="login_username">Username</label>
           <input id="login_username" name="username" required autocomplete="username" maxlength="80">
@@ -55,7 +55,7 @@ $vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', 'Reefer / 
 
       <h2 class="login-register-title">Driver registration</h2>
       <p class="login-register-lead">Create an account with your vehicle details (saved to MySQL).</p>
-      <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/register_driver.php') ?>" novalidate>
+      <form class="js-validate" method="post" action="../handlers/register_driver.php" novalidate>
         <div class="grid grid--2">
           <div class="form-row">
             <label for="reg_username">Username *</label>
@@ -104,7 +104,7 @@ $vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', 'Reefer / 
         </div>
       </form>
 
-      <p class="login-meta"><a href="<?= e(BASE_URL . '/driver/index.php') ?>">Driver home</a> · <a href="<?= e(BASE_URL . '/index.php') ?>">Portals</a></p>
+      <p class="login-meta"><a href="./index.php">Driver home</a> · <a href="../index.php">Portals</a></p>
     </div>
   </div>
   <script src="<?= e(asset('js/validate.js')) ?>" defer></script>

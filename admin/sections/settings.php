@@ -8,7 +8,7 @@ $s = repo_settings();
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
     Values are stored in the MySQL <code style="color:var(--accent)">settings</code> table.
   </p>
-  <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/admin_settings_save.php') ?>" novalidate>
+  <form class="js-validate" method="post" action="../handlers/admin_settings_save.php" novalidate>
     <div class="form-row">
       <label for="company_name">Company name *</label>
       <input id="company_name" name="company_name" required maxlength="160" value="<?= e($s['company_name'] ?? '') ?>">

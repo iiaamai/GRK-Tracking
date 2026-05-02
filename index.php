@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/init.php';
-$logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
+$logoUrl = './assets/GRK%20LOGO.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,9 +34,9 @@ $logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
       <h1>Large batches and container-scale freight, moved by trucks you can trust.</h1>
       <p class="lead">Choose a portal to book shipments, run deliveries, or manage operations. Data is stored in MySQL on XAMPP; sign-in uses session cookies.</p>
       <div class="landing__actions">
-        <a class="btn btn--primary" href="<?= e(BASE_URL . '/customer/index.php') ?>">Customer</a>
-        <a class="btn btn--ghost" href="<?= e(BASE_URL . '/driver/index.php') ?>">Driver</a>
-        <a class="btn btn--ghost" href="<?= e(BASE_URL . '/admin/index.php') ?>">Admin</a>
+        <a class="btn btn--primary" href="./customer/index.php">Customer</a>
+        <a class="btn btn--ghost" href="./driver/index.php">Driver</a>
+        <a class="btn btn--ghost" href="./admin/index.php">Admin</a>
       </div>
     </section>
     <section class="landing__grid">

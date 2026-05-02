@@ -17,7 +17,7 @@ foreach (array_keys($vehiclePayouts) as $label) {
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
     Availability is based on Fleet Management units marked <strong>available</strong>.
   </p>
-  <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/booking_submit.php') ?>" novalidate>
+  <form class="js-validate" method="post" action="../handlers/booking_submit.php" novalidate>
     <div class="grid grid--2">
       <div class="form-row">
         <label for="name">Full name / company *</label>

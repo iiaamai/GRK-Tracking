@@ -33,7 +33,7 @@ $ok = flash_get('success');
       <?php if ($err): ?>
         <div class="flash flash--err"><?= e($err) ?></div>
       <?php endif; ?>
-      <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/login_customer.php') ?>" novalidate>
+      <form class="js-validate" method="post" action="../handlers/login_customer.php" novalidate>
         <div class="form-row">
           <label for="login_username">Username</label>
           <input id="login_username" name="username" required autocomplete="username" maxlength="80">
@@ -54,7 +54,7 @@ $ok = flash_get('success');
 
       <h2 class="login-register-title">Create an account</h2>
       <p class="login-register-lead">Register to book trucks and manage shipments.</p>
-      <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/register_customer.php') ?>" novalidate>
+      <form class="js-validate" method="post" action="../handlers/register_customer.php" novalidate>
         <div class="grid grid--2">
           <div class="form-row">
             <label for="reg_username">Username *</label>
@@ -86,7 +86,7 @@ $ok = flash_get('success');
         </div>
       </form>
 
-      <p class="login-meta"><a href="<?= e(BASE_URL . '/customer/index.php') ?>">Customer home</a> · <a href="<?= e(BASE_URL . '/index.php') ?>">Portals</a></p>
+      <p class="login-meta"><a href="./index.php">Customer home</a> · <a href="../index.php">Portals</a></p>
     </div>
   </div>
   <script src="<?= e(asset('js/validate.js')) ?>" defer></script>

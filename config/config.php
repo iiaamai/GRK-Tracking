@@ -14,8 +14,13 @@ if (session_status() === PHP_SESSION_NONE) {
 /** Base path on disk (project root). */
 define('APP_ROOT', dirname(__DIR__));
 
-/** Web path prefix (change if project folder name differs). */
-define('BASE_URL', '/GRK-Tracking');
+/**
+ * Web path prefix for generated links and redirects.
+ * Use '' for URLs like /customer/login.php (site root = this project).
+ * Use '/GRK-Tracking' only if the app is served from a subfolder of the web root
+ * (e.g. default XAMPP http://localhost/GRK-Tracking/ with DocumentRoot = htdocs).
+ */
+define('BASE_URL', '');
 
 /** MySQL (XAMPP default: user root, empty password). Used by data/db.php. */
 define('DB_HOST', 'localhost');

@@ -5,7 +5,7 @@ $u = auth_user();
 ?>
 <div class="card">
   <h2>Driver & vehicle</h2>
-  <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/profile_driver.php') ?>" novalidate>
+  <form class="js-validate" method="post" action="../handlers/profile_driver.php" novalidate>
     <div class="grid grid--2">
       <div class="form-row">
         <label for="name">Full name *</label>

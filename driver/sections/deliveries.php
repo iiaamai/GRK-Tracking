@@ -28,8 +28,8 @@ $del = repo_driver_deliveries((int) $u['id']);
 
           $status = (string) ($b['status'] ?? '');
           $bn = (string) ($b['booking_number'] ?? '');
-          $gpLink = BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=gatepass';
-          $eirLink = BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir';
+          $gpLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=gatepass';
+          $eirLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir';
   $hasEir = false;
   if (isset($b['id'])) {
     $stmt = db()->prepare('SELECT 1 FROM eir WHERE booking_id = ? LIMIT 1');
@@ -78,7 +78,7 @@ $del = repo_driver_deliveries((int) $u['id']);
               class="driver-job-card__eirForm"
               method="post"
               enctype="multipart/form-data"
-              action="<?= e(BASE_URL . '/handlers/driver_upload_eir.php') ?>"
+              action="../handlers/driver_upload_eir.php"
               style="margin:0 0 0.75rem 0"
             >
               <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
@@ -92,13 +92,13 @@ $del = repo_driver_deliveries((int) $u['id']);
 
           <div class="driver-job-card__cta">
             <?php if ($status === 'accepted'): ?>
-              <form method="post" action="<?= e(BASE_URL . '/handlers/driver_update_delivery.php') ?>" style="margin:0">
+              <form method="post" action="../handlers/driver_update_delivery.php" style="margin:0">
                 <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
                 <input type="hidden" name="action" value="in_transit">
                 <button type="submit" class="driver-job-card__ctaBtn">START TRANSIT</button>
               </form>
             <?php elseif ($status === 'in_transit' && $hasEir): ?>
-              <form method="post" action="<?= e(BASE_URL . '/handlers/driver_update_delivery.php') ?>" style="margin:0">
+              <form method="post" action="../handlers/driver_update_delivery.php" style="margin:0">
                 <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
                 <input type="hidden" name="action" value="completed">
                 <button type="submit" class="driver-job-card__ctaBtn">COMPLETE</button>

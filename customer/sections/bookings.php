@@ -8,7 +8,7 @@ $mine = repo_customer_bookings((int) $u['id']);
   <h2>Your shipments</h2>
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">All bookings tied to your account.</p>
   <?php if (!$mine): ?>
-    <p style="color:var(--muted)">No bookings yet. Use <a href="<?= e(BASE_URL . '/customer/dashboard.php?section=booking') ?>">Booking</a> to create one.</p>
+    <p style="color:var(--muted)">No bookings yet. Use <a href="./dashboard.php?section=booking">Booking</a> to create one.</p>
   <?php else: ?>
     <div class="table-wrap">
       <table>
@@ -28,7 +28,7 @@ $mine = repo_customer_bookings((int) $u['id']);
             <?php $cls = 'badge--' . preg_replace('/[^a-z_]/', '', (string) ($b['status'] ?? 'pending')); ?>
             <?php
               $bn = (string) ($b['booking_number'] ?? '');
-              $eirLink = BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir';
+              $eirLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir';
               $eirReady = (string) ($b['eir_image'] ?? '') !== '';
               $canShowEir = in_array(($b['status'] ?? ''), ['in_transit', 'completed'], true) && $eirReady;
             ?>

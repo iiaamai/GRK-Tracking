@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-$logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
+$logoUrl = '../assets/GRK%20LOGO.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,15 +27,15 @@ $logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
           <small>Customer portal</small>
         </span>
       </span>
-      <a class="landing__back" href="<?= e(BASE_URL . '/index.php') ?>">← All portals</a>
+      <a class="landing__back" href="../index.php">← All portals</a>
     </header>
     <section class="landing__hero">
       <span class="landing__eyebrow">Book trucks & track cargo</span>
       <h1>Schedule pallet and container-scale moves with clear status updates.</h1>
       <p class="lead">Create bookings, track by booking number or username, and manage your profile after signing in.</p>
       <div class="landing__actions">
-        <a class="btn btn--primary" href="<?= e(BASE_URL . '/customer/login.php') ?>">Customer login</a>
-        <a class="btn btn--ghost" href="<?= e(BASE_URL . '/index.php') ?>">Back</a>
+        <a class="btn btn--primary" href="./login.php">Customer login</a>
+        <a class="btn btn--ghost" href="../index.php">Back</a>
       </div>
     </section>
     <section class="landing__grid">

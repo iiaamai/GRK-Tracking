@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-$logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
+$logoUrl = '../assets/GRK%20LOGO.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,15 +27,15 @@ $logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
           <small>Driver portal</small>
         </span>
       </span>
-      <a class="landing__back" href="<?= e(BASE_URL . '/index.php') ?>">← All portals</a>
+      <a class="landing__back" href="../index.php">← All portals</a>
     </header>
     <section class="landing__hero">
       <span class="landing__eyebrow">Fleet & jobs</span>
       <h1>Accept jobs the moment customers book, then run the route.</h1>
       <p class="lead">Available jobs update automatically. Track deliveries, earnings, and your vehicle profile.</p>
       <div class="landing__actions">
-        <a class="btn btn--primary" href="<?= e(BASE_URL . '/driver/login.php') ?>">Driver login</a>
-        <a class="btn btn--ghost" href="<?= e(BASE_URL . '/index.php') ?>">Back</a>
+        <a class="btn btn--primary" href="./login.php">Driver login</a>
+        <a class="btn btn--ghost" href="../index.php">Back</a>
       </div>
     </section>
     <section class="landing__grid">

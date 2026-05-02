@@ -37,7 +37,7 @@ $blockReason = $hasActive
           $dtVal = (string) ($b['booking_datetime'] ?? '');
           $payoutVal = $b['payout'] ?? null;
           $payoutStr = format_php_money($payoutVal !== null ? (float) $payoutVal : null);
-          $gpLink = BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode((string) ($b['booking_number'] ?? '')) . '&doc=gatepass';
+          $gpLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode((string) ($b['booking_number'] ?? '')) . '&doc=gatepass';
         ?>
         <div class="driver-job-card">
           <div class="driver-job-card__head">
@@ -72,7 +72,7 @@ $blockReason = $hasActive
           </div>
 
           <div class="driver-job-card__cta">
-            <form method="post" action="<?= e(BASE_URL . '/handlers/driver_accept_job.php') ?>" style="margin:0">
+            <form method="post" action="../handlers/driver_accept_job.php" style="margin:0">
               <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
               <button
                 type="submit"

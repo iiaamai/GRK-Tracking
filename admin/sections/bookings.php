@@ -57,7 +57,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
               <td><?= e(format_timestamp($row['posting_date'] ?? '', 'M j, Y')) ?></td>
               <td><?= e(format_timestamp($row['booking_datetime'] ?? '')) ?></td>
               <td>
-                <form method="post" action="<?= e(BASE_URL . '/handlers/admin_booking_action.php') ?>" style="display:flex;gap:0.35rem;align-items:center;margin:0;flex-wrap:wrap">
+                <form method="post" action="../handlers/admin_booking_action.php" style="display:flex;gap:0.35rem;align-items:center;margin:0;flex-wrap:wrap">
                   <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">
                   <select name="action" style="max-width:160px;padding:0.35rem">
                     <?php foreach ($statuses as $s): ?>
@@ -70,7 +70,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
               <td style="max-width:220px;font-size:0.8rem;vertical-align:top">
                 <?php
                   $gp = (string) ($row['gatepass_image'] ?? '');
-                  $gpUrl = $gp !== '' ? (BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=gatepass') : '';
+                  $gpUrl = $gp !== '' ? ('../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=gatepass') : '';
                 ?>
                 <?php if ($gpUrl !== ''): ?>
                   <div style="margin-bottom:0.35rem">
@@ -78,7 +78,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
                   </div>
                 <?php endif; ?>
                 <?php if (!in_array(($row['status'] ?? ''), ['completed', 'cancelled'], true)): ?>
-                  <form method="post" enctype="multipart/form-data" action="<?= e(BASE_URL . '/handlers/admin_booking_gatepass.php') ?>" style="margin:0;display:flex;flex-direction:column;gap:0.35rem;align-items:flex-start">
+                  <form method="post" enctype="multipart/form-data" action="../handlers/admin_booking_gatepass.php" style="margin:0;display:flex;flex-direction:column;gap:0.35rem;align-items:flex-start">
                     <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">
                     <input type="file" name="gatepass" accept="image/*" required style="max-width:100%;font-size:0.75rem">
                     <button type="submit" class="btn btn--ghost" style="padding:0.3rem 0.45rem;font-size:0.75rem"><?= $gpUrl !== '' ? 'Replace' : 'Upload' ?></button>
@@ -89,7 +89,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
               </td>
               <td style="max-width:160px;font-size:0.8rem;vertical-align:top">
                 <?php
-                  $eirUrl = (BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir');
+                  $eirUrl = ('../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir');
                   $hasEir = false;
                   if (isset($row['id'])) {
                     $stmt = db()->prepare('SELECT 1 FROM eir WHERE booking_id = ? LIMIT 1');
@@ -105,7 +105,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
               </td>
               <td><?= e($row['pickup'] ?? '') ?> → <?= e($row['dropoff'] ?? '') ?></td>
               <td>
-                <form method="post" action="<?= e(BASE_URL . '/handlers/admin_booking_action.php') ?>" style="margin:0" onsubmit="return confirm('Delete this booking?');">
+                <form method="post" action="../handlers/admin_booking_action.php" style="margin:0" onsubmit="return confirm('Delete this booking?');">
                   <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">
                   <input type="hidden" name="action" value="delete">
                   <button type="submit" class="btn btn--danger" style="padding:0.35rem 0.5rem;font-size:0.8rem">Delete</button>

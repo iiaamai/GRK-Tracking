@@ -13,7 +13,7 @@ if ($qUser !== '') {
     $rows = repo_find_bookings_by_username($qUser);
 }
 
-$trackUrl = BASE_URL . '/customer/dashboard.php';
+$trackUrl = './dashboard.php';
 ?>
 <div class="card">
   <h2>Check status</h2>
@@ -87,7 +87,7 @@ $trackUrl = BASE_URL . '/customer/dashboard.php';
       <?php
         $status = (string) ($b['status'] ?? '');
         $eirReady = (string) ($b['eir_image'] ?? '') !== '';
-        $eirLink = BASE_URL . '/handlers/view_booking_doc.php?booking_number=' . urlencode((string) ($b['booking_number'] ?? '')) . '&doc=eir';
+        $eirLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode((string) ($b['booking_number'] ?? '')) . '&doc=eir';
       ?>
       <?php if (in_array($status, ['in_transit', 'completed'], true) && $eirReady): ?>
         <section class="track-shipment-panel__block" aria-labelledby="track-block-docs">

@@ -33,8 +33,8 @@ $active = count(array_filter($mine, static fn ($b) => in_array($b['status'] ?? '
   <div class="card">
     <h2>Quick actions</h2>
     <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">Start a shipment or check status.</p>
-    <a class="btn btn--primary" href="<?= e(BASE_URL . '/customer/dashboard.php?section=booking') ?>">New booking</a>
-    <a class="btn btn--ghost" href="<?= e(BASE_URL . '/customer/dashboard.php?section=track') ?>" style="margin-left:0.5rem">Track</a>
+    <a class="btn btn--primary" href="./dashboard.php?section=booking">New booking</a>
+    <a class="btn btn--ghost" href="./dashboard.php?section=track" style="margin-left:0.5rem">Track</a>
   </div>
   <div class="card">
     <h2>Need help?</h2>

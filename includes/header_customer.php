@@ -2,8 +2,8 @@
 declare(strict_types=1);
 /** @var string $section */
 /** @var string $pageTitle */
-$base = BASE_URL . '/customer/dashboard.php';
-$logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
+$base = 'dashboard.php';
+$logoUrl = '../assets/GRK%20LOGO.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +33,7 @@ $logoUrl = BASE_URL . '/assets/GRK%20LOGO.png';
         <a href="<?= e($base . '?section=profile') ?>" class="<?= $section === 'profile' ? 'is-active' : '' ?>">Profile</a>
       </nav>
       <div class="sidebar__foot">
-        <a class="btn btn--ghost" style="width:100%" href="<?= e(BASE_URL . '/handlers/logout.php?portal=customer') ?>">Log out</a>
+        <a class="btn btn--ghost" style="width:100%" href="../handlers/logout.php?portal=customer">Log out</a>
       </div>
     </aside>
     <main class="main">

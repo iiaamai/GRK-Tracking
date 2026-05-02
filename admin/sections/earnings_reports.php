@@ -40,7 +40,7 @@ if ($period === 'weekly') {
 
 $sum = repo_admin_earnings_summary_for_range($start->format('Y-m-d'), $end->format('Y-m-d'));
 
-$base = BASE_URL . '/admin/dashboard.php?section=earnings_reports';
+$base = 'dashboard.php?section=earnings_reports';
 $dateParam = $anchor->format('Y-m-d');
 $tab = static function (string $p, string $label) use ($base, $period, $dateParam): void {
     $href = $base . '&period=' . urlencode($p) . '&date=' . urlencode($dateParam);
@@ -64,7 +64,7 @@ $tab = static function (string $p, string $label) use ($base, $period, $datePara
     <?php $tab('yearly', 'Yearly'); ?>
   </div>
 
-  <form method="get" action="<?= e(BASE_URL . '/admin/dashboard.php') ?>" style="margin:1rem 0 0;display:flex;gap:0.75rem;flex-wrap:wrap;align-items:flex-end">
+  <form method="get" action="./dashboard.php" style="margin:1rem 0 0;display:flex;gap:0.75rem;flex-wrap:wrap;align-items:flex-end">
     <input type="hidden" name="section" value="earnings_reports">
     <input type="hidden" name="period" value="<?= e($period) ?>">
     <div class="form-row" style="margin:0;min-width:220px">
@@ -75,7 +75,7 @@ $tab = static function (string $p, string $label) use ($base, $period, $datePara
   </form>
 
   <?php
-    $csvHref = BASE_URL . '/handlers/admin_export_earnings_csv.php'
+    $csvHref = '../handlers/admin_export_earnings_csv.php'
       . '?period=' . urlencode($period)
       . '&date=' . urlencode($anchor->format('Y-m-d'));
   ?>

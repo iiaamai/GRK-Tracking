@@ -29,7 +29,7 @@ $err = flash_get('error');
       <?php if ($err): ?>
         <div class="flash flash--err"><?= e($err) ?></div>
       <?php endif; ?>
-      <form class="js-validate" method="post" action="<?= e(BASE_URL . '/handlers/login_admin.php') ?>" novalidate>
+      <form class="js-validate" method="post" action="../handlers/login_admin.php" novalidate>
         <div class="form-row">
           <label for="username">Username</label>
           <input id="username" name="username" required autocomplete="username" maxlength="80">
@@ -45,7 +45,7 @@ $err = flash_get('error');
       <div class="demo-hint">
         Demo: <code>admin</code> / <code>admin123</code>
       </div>
-      <p class="login-meta"><a href="<?= e(BASE_URL . '/admin/index.php') ?>">Admin home</a> · <a href="<?= e(BASE_URL . '/index.php') ?>">Portals</a></p>
+      <p class="login-meta"><a href="./index.php">Admin home</a> · <a href="../index.php">Portals</a></p>
     </div>
   </div>
   <script src="<?= e(asset('js/validate.js')) ?>" defer></script>

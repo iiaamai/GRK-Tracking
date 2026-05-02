@@ -1,6 +1,11 @@
 -- System Enhancements Compliance (Schemas / Migrations Only)
--- Run inside an existing database, e.g. `express_logistics`.
+-- Selects the app database (must match config/config.php DB_NAME).
 -- This file contains ONLY schema creation / alteration (no demo inserts).
+
+CREATE DATABASE IF NOT EXISTS `express_logistics`
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+USE `express_logistics`;
 
 SET FOREIGN_KEY_CHECKS = 0;
 SET @db := DATABASE();

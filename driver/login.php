@@ -21,8 +21,7 @@ $vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', 'Reefer / 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="<?= e(asset_v('css/global.css')) ?>">
-  <link rel="stylesheet" href="<?= e(asset_v('css/login.css')) ?>">
+  <style><?= embedded_styles_global() ?><?= embedded_styles_login() ?></style>
 </head>
 <body>
   <div class="login-page">

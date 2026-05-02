@@ -1,5 +1,11 @@
 -- System Enhancements Compliance (Sample Data Only)
 -- Run after `data/enhancements/schemas.sql`.
+-- Selects the app database (must match config/config.php DB_NAME).
+
+CREATE DATABASE IF NOT EXISTS `express_logistics`
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+USE `express_logistics`;
 
 SET FOREIGN_KEY_CHECKS = 0;
 

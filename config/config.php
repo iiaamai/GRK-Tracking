@@ -23,8 +23,8 @@ define('APP_ROOT', dirname(__DIR__));
 define('BASE_URL', '');
 
 /** MySQL (XAMPP default: user root, empty password). Used by data/db.php. */
-define('DB_HOST', 'localhost');
+define('DB_HOST', 'gk-database.cfym8s4s083v.ap-southeast-1.rds.amazonaws.com');
 define('DB_NAME', 'express_logistics');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_USER', 'admin');
+define('DB_PASS', 'GK_truckingservices_mgmt');
 define('DB_CHARSET', 'utf8mb4');

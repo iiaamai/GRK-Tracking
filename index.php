@@ -2,7 +2,16 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/init.php';
-$logoUrl = './assets/GRK%20LOGO.png';
+// Database connection parameters
+$host = 'gk-database.cfym8s4s083v.ap-southeast-1.rds.amazonaws.com'; // RDS endpoint
+$dbname = 'express_logistics'; // The database you created in RDS
+$username = 'admin'; // The master username you set for RDS
+$password = 'GK_truckingservices_mgmt'; // The password for your master username
+
+// Create the DSN (Data Source Name)
+$dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
+
+$logoUrl = '.\assets\GRKLOGO.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">

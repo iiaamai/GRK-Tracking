@@ -32,7 +32,11 @@ $logoUrl = '../assets/GRK%20LOGO.png';
         <a href="<?= e($base . '?section=profile') ?>" class="<?= $section === 'profile' ? 'is-active' : '' ?>">Profile</a>
       </nav>
       <div class="sidebar__foot">
-        <a class="btn btn--ghost" style="width:100%" href="../handlers/logout.php?portal=driver">Log out</a>
+        <form method="post" action="../handlers/logout.php" style="margin:0">
+          <?= csrf_field() ?>
+          <input type="hidden" name="portal" value="driver">
+          <button type="submit" class="btn btn--ghost" style="width:100%">Log out</button>
+        </form>
       </div>
     </aside>
     <main class="main">

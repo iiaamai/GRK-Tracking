@@ -58,6 +58,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
               <td><?= e(format_timestamp($row['booking_datetime'] ?? '')) ?></td>
               <td>
                 <form method="post" action="../handlers/admin_booking_action.php" style="display:flex;gap:0.35rem;align-items:center;margin:0;flex-wrap:wrap">
+                  <?= csrf_field() ?>
                   <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">
                   <select name="action" style="max-width:160px;padding:0.35rem">
                     <?php foreach ($statuses as $s): ?>
@@ -79,6 +80,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
                 <?php endif; ?>
                 <?php if (!in_array(($row['status'] ?? ''), ['completed', 'cancelled'], true)): ?>
                   <form method="post" enctype="multipart/form-data" action="../handlers/admin_booking_gatepass.php" style="margin:0;display:flex;flex-direction:column;gap:0.35rem;align-items:flex-start">
+                    <?= csrf_field() ?>
                     <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">
                     <input type="file" name="gatepass" accept="image/*" required style="max-width:100%;font-size:0.75rem">
                     <button type="submit" class="btn btn--ghost" style="padding:0.3rem 0.45rem;font-size:0.75rem"><?= $gpUrl !== '' ? 'Replace' : 'Upload' ?></button>
@@ -106,6 +108,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
               <td><?= e($row['pickup'] ?? '') ?> → <?= e($row['dropoff'] ?? '') ?></td>
               <td>
                 <form method="post" action="../handlers/admin_booking_action.php" style="margin:0" onsubmit="return confirm('Delete this booking?');">
+                  <?= csrf_field() ?>
                   <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">
                   <input type="hidden" name="action" value="delete">
                   <button type="submit" class="btn btn--danger" style="padding:0.35rem 0.5rem;font-size:0.8rem">Delete</button>

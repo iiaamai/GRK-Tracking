@@ -2,13 +2,14 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
-auth_require_role('driver');
+auth_require_role(AUTH_ROLE_DRIVER);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(BASE_URL . '/driver/dashboard.php?section=profile');
 }
+
+csrf_require_post();
 
 $name = trim((string) ($_POST['name'] ?? ''));
 $email = trim((string) ($_POST['email'] ?? ''));

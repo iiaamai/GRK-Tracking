@@ -81,6 +81,7 @@ $del = repo_driver_deliveries((int) $u['id']);
               action="../handlers/driver_upload_eir.php"
               style="margin:0 0 0.75rem 0"
             >
+              <?= csrf_field() ?>
               <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
               <div class="driver-job-card__eirLbl">Upload EIR (required before complete)</div>
               <div class="driver-job-card__eirRow">
@@ -93,12 +94,14 @@ $del = repo_driver_deliveries((int) $u['id']);
           <div class="driver-job-card__cta">
             <?php if ($status === 'accepted'): ?>
               <form method="post" action="../handlers/driver_update_delivery.php" style="margin:0">
+                <?= csrf_field() ?>
                 <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
                 <input type="hidden" name="action" value="in_transit">
                 <button type="submit" class="driver-job-card__ctaBtn">START TRANSIT</button>
               </form>
             <?php elseif ($status === 'in_transit' && $hasEir): ?>
               <form method="post" action="../handlers/driver_update_delivery.php" style="margin:0">
+                <?= csrf_field() ?>
                 <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
                 <input type="hidden" name="action" value="completed">
                 <button type="submit" class="driver-job-card__ctaBtn">COMPLETE</button>

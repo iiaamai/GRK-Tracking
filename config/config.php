@@ -5,9 +5,15 @@
 declare(strict_types=1);
 
 if (session_status() === PHP_SESSION_NONE) {
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || ((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
+        || ((int) ($_SERVER['SERVER_PORT'] ?? 0) === 443);
+
     session_start([
         'cookie_httponly' => true,
+        'cookie_secure' => $https,
         'cookie_samesite' => 'Lax',
+        'use_strict_mode' => true,
     ]);
 }
 

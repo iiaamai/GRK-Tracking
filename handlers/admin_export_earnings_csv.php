@@ -2,18 +2,26 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
-auth_require_role('admin');
+auth_require_role(AUTH_ROLE_ADMIN, ['forbidden_wrong_role' => true]);
 
-$period = (string) ($_GET['period'] ?? 'daily');
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    http_response_code(405);
+    header('Allow: POST');
+    header('Content-Type: text/plain; charset=UTF-8');
+    exit('Method Not Allowed');
+}
+
+csrf_require_post();
+
+$period = (string) ($_POST['period'] ?? 'daily');
 $period = in_array($period, ['daily', 'weekly', 'monthly', 'yearly'], true) ? $period : 'daily';
 
 $tz = new DateTimeZone('Asia/Manila');
 $now = new DateTimeImmutable('now', $tz);
 
-$date = trim((string) ($_GET['date'] ?? ''));
-$year = (int) ($_GET['year'] ?? 0);
+$date = trim((string) ($_POST['date'] ?? ''));
+$year = (int) ($_POST['year'] ?? 0);
 if ($date !== '') {
     $date = preg_replace('/[^0-9-]+/', '', $date);
     try {
@@ -83,4 +91,3 @@ fputcsv($out, []);
 fputcsv($out, ['TOTAL', '', '', '', '', '', '', number_format($total, 2, '.', '')]);
 fclose($out);
 exit;
-

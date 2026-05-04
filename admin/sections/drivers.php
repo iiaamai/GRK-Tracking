@@ -8,6 +8,7 @@ $today = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format
 <div class="card">
   <h2>Add driver</h2>
   <form class="js-validate" method="post" action="../handlers/admin_driver_action.php" novalidate>
+    <?= csrf_field() ?>
     <input type="hidden" name="action" value="add">
     <div class="grid grid--2">
       <div class="form-row">
@@ -83,6 +84,7 @@ $today = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format
               </td>
               <td>
                 <form method="post" action="../handlers/admin_driver_action.php" style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:flex-end;margin:0">
+                  <?= csrf_field() ?>
                   <input type="hidden" name="action" value="edit">
                   <input type="hidden" name="id" value="<?= (int) ($r['id'] ?? 0) ?>">
                   <div class="form-row" style="margin:0;flex:1;min-width:90px">
@@ -121,6 +123,7 @@ $today = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format
                   <span style="color:var(--muted)">Cleared today</span>
                 <?php else: ?>
                   <form method="post" enctype="multipart/form-data" action="../handlers/admin_driver_clear.php" style="margin:0;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap" onsubmit="return confirm('Clear this driver for today and upload the signed confirmation?');">
+                    <?= csrf_field() ?>
                     <input type="hidden" name="driver_id" value="<?= (int) ($r['id'] ?? 0) ?>">
                     <input type="file" name="confirmation" accept="image/*" required style="max-width:200px;font-size:0.8rem">
                     <button type="submit" class="btn btn--ghost" style="padding:0.35rem 0.55rem;font-size:0.8rem;white-space:nowrap">Clear driver</button>
@@ -129,6 +132,7 @@ $today = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format
               </td>
               <td>
                 <form method="post" action="../handlers/admin_driver_action.php" style="margin:0" onsubmit="return confirm('Remove this driver?');">
+                  <?= csrf_field() ?>
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="id" value="<?= (int) ($r['id'] ?? 0) ?>">
                   <button type="submit" class="btn btn--danger" style="padding:0.35rem 0.5rem;font-size:0.8rem">Delete</button>

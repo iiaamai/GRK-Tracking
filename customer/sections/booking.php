@@ -18,6 +18,7 @@ foreach (array_keys($vehiclePayouts) as $label) {
     Availability is based on Fleet Management units marked <strong>available</strong>.
   </p>
   <form class="js-validate" method="post" action="../handlers/booking_submit.php" novalidate>
+    <?= csrf_field() ?>
     <div class="grid grid--2">
       <div class="form-row">
         <label for="name">Full name / company *</label>

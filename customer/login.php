@@ -2,9 +2,8 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
-if (auth_user() && (auth_user()['role'] ?? '') === 'customer') {
+if (auth_user() && (auth_user()['role'] ?? '') === AUTH_ROLE_CUSTOMER) {
     redirect(BASE_URL . '/customer/dashboard.php');
 }
 
@@ -34,6 +33,7 @@ $ok = flash_get('success');
         <div class="flash flash--err"><?= e($err) ?></div>
       <?php endif; ?>
       <form class="js-validate" method="post" action="../handlers/login_customer.php" novalidate>
+        <?= csrf_field() ?>
         <div class="form-row">
           <label for="login_username">Username</label>
           <input id="login_username" name="username" required autocomplete="username" maxlength="80">
@@ -55,6 +55,7 @@ $ok = flash_get('success');
       <h2 class="login-register-title">Create an account</h2>
       <p class="login-register-lead">Register to book trucks and manage shipments.</p>
       <form class="js-validate" method="post" action="../handlers/register_customer.php" novalidate>
+        <?= csrf_field() ?>
         <div class="grid grid--2">
           <div class="form-row">
             <label for="reg_username">Username *</label>

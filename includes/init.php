@@ -7,3 +7,5 @@ require_once APP_ROOT . '/includes/helpers.php';
 require_once APP_ROOT . '/includes/embedded_styles.php';
 require_once APP_ROOT . '/includes/booking_pricing.php';
 require_once APP_ROOT . '/data/repository.php';
+require_once APP_ROOT . '/includes/csrf.php';
+require_once APP_ROOT . '/includes/auth.php';

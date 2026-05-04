@@ -2,14 +2,15 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
-auth_require_role('customer');
+auth_require_role(AUTH_ROLE_CUSTOMER);
 $u = auth_user();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(BASE_URL . '/customer/dashboard.php?section=booking');
 }
+
+csrf_require_post();
 
 $name = trim((string) ($_POST['name'] ?? ''));
 $email = trim((string) ($_POST['email'] ?? ''));

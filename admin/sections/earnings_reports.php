@@ -74,13 +74,13 @@ $tab = static function (string $p, string $label) use ($base, $period, $datePara
     <button type="submit" class="btn btn--ghost">Apply</button>
   </form>
 
-  <?php
-    $csvHref = '../handlers/admin_export_earnings_csv.php'
-      . '?period=' . urlencode($period)
-      . '&date=' . urlencode($anchor->format('Y-m-d'));
-  ?>
   <div style="margin-top:0.75rem;display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
-    <a class="btn btn--ghost" href="<?= e($csvHref) ?>">Export CSV</a>
+    <form method="post" action="../handlers/admin_export_earnings_csv.php" style="margin:0">
+      <?= csrf_field() ?>
+      <input type="hidden" name="period" value="<?= e($period) ?>">
+      <input type="hidden" name="date" value="<?= e($anchor->format('Y-m-d')) ?>">
+      <button type="submit" class="btn btn--ghost">Export CSV</button>
+    </form>
     <small style="color:var(--muted)">Exports the filtered completed deliveries for the selected range.</small>
   </div>
 </div>

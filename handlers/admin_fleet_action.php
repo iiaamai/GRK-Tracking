@@ -2,13 +2,14 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
-auth_require_role('admin');
+auth_require_role(AUTH_ROLE_ADMIN);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(BASE_URL . '/admin/dashboard.php?section=fleet');
 }
+
+csrf_require_post();
 
 $act = trim((string) ($_POST['action'] ?? ''));
 $fleet = repo_fleet();

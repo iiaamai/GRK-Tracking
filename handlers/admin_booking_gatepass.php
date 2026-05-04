@@ -2,14 +2,15 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 require_once dirname(__DIR__) . '/includes/booking_uploads.php';
 
-auth_require_role('admin');
+auth_require_role(AUTH_ROLE_ADMIN);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
 }
+
+csrf_require_post();
 
 $bn = trim((string) ($_POST['booking_number'] ?? ''));
 if ($bn === '') {

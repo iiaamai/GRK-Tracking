@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
 $u = auth_user();
 if (!$u) {
@@ -54,7 +53,13 @@ if ($role === 'admin') {
             exit('Forbidden');
         }
     } else {
-        // Drivers may preview gate pass before accepting (pending) or during active runs.
+        // Gate pass: unassigned job (any driver may preview) or assigned to this driver only.
+        $assigned = (int) ($b['driver_id'] ?? 0);
+        $me = (int) ($u['id'] ?? 0);
+        if ($assigned !== 0 && $assigned !== $me) {
+            header('HTTP/1.1 403 Forbidden');
+            exit('Forbidden');
+        }
         if (!in_array($status, ['pending', 'accepted', 'in_transit', 'completed'], true)) {
             header('HTTP/1.1 403 Forbidden');
             exit('Forbidden');

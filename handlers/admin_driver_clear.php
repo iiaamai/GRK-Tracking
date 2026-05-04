@@ -2,15 +2,16 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 require_once dirname(__DIR__) . '/includes/clearance_uploads.php';
 
-auth_require_role('admin');
+auth_require_role(AUTH_ROLE_ADMIN);
 $admin = auth_user();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(BASE_URL . '/admin/dashboard.php?section=drivers');
 }
+
+csrf_require_post();
 
 $driverId = (int) ($_POST['driver_id'] ?? 0);
 if ($driverId <= 0) {

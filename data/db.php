@@ -5,6 +5,9 @@ declare(strict_types=1);
  * MySQL (XAMPP) connection via PDO.
  * Credentials: config/config.php (DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_CHARSET).
  * Import data/schema.sql in phpMyAdmin before first use.
+ *
+ * Use prepared statements (`$pdo->prepare` + bound parameters) for all dynamic SQL;
+ * `ATTR_EMULATE_PREPARES` is disabled so MySQL native prepares are used where possible.
  */
 if (!defined('APP_ROOT')) {
     require_once dirname(__DIR__) . '/config/config.php';

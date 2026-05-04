@@ -2,14 +2,15 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
-auth_require_role('driver');
+auth_require_role(AUTH_ROLE_DRIVER);
 $u = auth_user();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
 }
+
+csrf_require_post();
 
 $bn = trim((string) ($_POST['booking_number'] ?? ''));
 $action = trim((string) ($_POST['action'] ?? ''));

@@ -2,9 +2,8 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
-auth_require_role('admin');
+auth_require_role(AUTH_ROLE_ADMIN);
 
 $section = $_GET['section'] ?? 'overview';
 $allowed = ['overview', 'earnings_reports', 'bookings', 'drivers', 'customers', 'fleet', 'settings'];

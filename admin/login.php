@@ -2,9 +2,8 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
-if (auth_user() && (auth_user()['role'] ?? '') === 'admin') {
+if (auth_user() && (auth_user()['role'] ?? '') === AUTH_ROLE_ADMIN) {
     redirect(BASE_URL . '/admin/dashboard.php');
 }
 
@@ -30,6 +29,7 @@ $err = flash_get('error');
         <div class="flash flash--err"><?= e($err) ?></div>
       <?php endif; ?>
       <form class="js-validate" method="post" action="../handlers/login_admin.php" novalidate>
+        <?= csrf_field() ?>
         <div class="form-row">
           <label for="username">Username</label>
           <input id="username" name="username" required autocomplete="username" maxlength="80">

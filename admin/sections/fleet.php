@@ -8,6 +8,7 @@ $st = ['available', 'in_use', 'maintenance'];
 <div class="card">
   <h2>Add vehicle</h2>
   <form class="js-validate" method="post" action="../handlers/admin_fleet_action.php" novalidate>
+    <?= csrf_field() ?>
     <input type="hidden" name="action" value="add">
     <div class="grid grid--2">
       <div class="form-row">
@@ -98,6 +99,7 @@ $st = ['available', 'in_use', 'maintenance'];
               <td><?= e($v['label'] ?? '') ?></td>
               <td>
                 <form method="post" action="../handlers/admin_fleet_action.php" style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:flex-end;margin:0">
+                  <?= csrf_field() ?>
                   <input type="hidden" name="action" value="edit">
                   <input type="hidden" name="id" value="<?= (int) ($v['id'] ?? 0) ?>">
                   <div class="form-row" style="margin:0;flex:1;min-width:100px">
@@ -133,6 +135,7 @@ $st = ['available', 'in_use', 'maintenance'];
               </td>
               <td>
                 <form method="post" action="../handlers/admin_fleet_action.php" style="margin:0" onsubmit="return confirm('Remove this vehicle?');">
+                  <?= csrf_field() ?>
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="id" value="<?= (int) ($v['id'] ?? 0) ?>">
                   <button type="submit" class="btn btn--danger" style="padding:0.35rem 0.5rem;font-size:0.8rem">Delete</button>

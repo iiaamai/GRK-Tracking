@@ -2,13 +2,14 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
-auth_require_role('admin');
+auth_require_role(AUTH_ROLE_ADMIN);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(BASE_URL . '/admin/dashboard.php?section=settings');
 }
+
+csrf_require_post();
 
 $company_name = trim((string) ($_POST['company_name'] ?? ''));
 $support_email = trim((string) ($_POST['support_email'] ?? ''));

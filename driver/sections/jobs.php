@@ -73,6 +73,7 @@ $blockReason = $hasActive
 
           <div class="driver-job-card__cta">
             <form method="post" action="../handlers/driver_accept_job.php" style="margin:0">
+              <?= csrf_field() ?>
               <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
               <button
                 type="submit"

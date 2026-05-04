@@ -2,23 +2,27 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-require_once dirname(__DIR__) . '/includes/auth.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(BASE_URL . '/driver/login.php');
 }
 
+csrf_require_post();
+
 $username = trim((string) ($_POST['username'] ?? ''));
 $password = (string) ($_POST['password'] ?? '');
 
-$user = auth_login('driver', $username, $password);
+$user = auth_login(AUTH_ROLE_DRIVER, $username, $password);
 if (!$user) {
     flash_set('error', 'Invalid username or password.');
     redirect(BASE_URL . '/driver/login.php');
 }
 
+auth_session_regenerate();
+csrf_rotate();
+
 $_SESSION['user'] = [
-    'role' => 'driver',
+    'role' => AUTH_ROLE_DRIVER,
     'id' => $user['id'],
     'username' => $user['username'],
     'name' => $user['name'],

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/init.php';
-$logoUrl = '../assets/GRK%20LOGO.png';
+$logoUrl = '../assets/GRKLOGO.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">

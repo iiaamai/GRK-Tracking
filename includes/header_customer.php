@@ -3,7 +3,7 @@ declare(strict_types=1);
 /** @var string $section */
 /** @var string $pageTitle */
 $base = 'dashboard.php';
-$logoUrl = '../assets/GRK%20LOGO.png';
+$logoUrl = '../assets/GRKLOGO.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">

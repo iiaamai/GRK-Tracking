@@ -25,6 +25,6 @@ $completed = repo_driver_completed_deliveries_count((int) $u['id']);
   <h2>Hello, <?= e((string) $u['name']) ?></h2>
   <p style="margin:0;color:var(--muted);font-size:0.95rem;">
     Vehicle: <strong><?= e((string) ($u['vehicle_type'] ?? '')) ?></strong> · Plate <strong><?= e((string) ($u['plate'] ?? '')) ?></strong>
-    · Available jobs appear after admin uploads a gate pass for each booking.
+    · New customer bookings appear in <strong>Available Jobs</strong> as soon as they are submitted.
   </p>
 </div>

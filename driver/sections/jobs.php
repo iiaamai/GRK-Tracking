@@ -15,7 +15,7 @@ $blockReason = $hasActive
 <div class="card">
   <h2>Available Jobs</h2>
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
-    Jobs appear here only after an administrator has reviewed the booking and uploaded a <strong>gate pass</strong>.
+    New customer bookings appear here as soon as they are submitted. Accept a job to add it to your deliveries.
   </p>
   <?php if ($blocked): ?>
     <div class="flash flash--err" style="margin:0 0 1rem">
@@ -37,6 +37,7 @@ $blockReason = $hasActive
           $dtVal = (string) ($b['booking_datetime'] ?? '');
           $payoutVal = $b['payout'] ?? null;
           $payoutStr = format_php_money($payoutVal !== null ? (float) $payoutVal : null);
+          $hasGatepass = (string) ($b['gatepass_image'] ?? '') !== '';
           $gpLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode((string) ($b['booking_number'] ?? '')) . '&doc=gatepass';
         ?>
         <div class="driver-job-card">
@@ -67,9 +68,11 @@ $blockReason = $hasActive
             </div>
           </div>
 
-          <div class="driver-job-card__docs">
-            <a href="<?= e($gpLink) ?>" target="_blank" rel="noopener noreferrer">View gate pass</a>
-          </div>
+          <?php if ($hasGatepass): ?>
+            <div class="driver-job-card__docs">
+              <a href="<?= e($gpLink) ?>" target="_blank" rel="noopener noreferrer">View gate pass</a>
+            </div>
+          <?php endif; ?>
 
           <div class="driver-job-card__cta">
             <form method="post" action="../handlers/driver_accept_job.php" style="margin:0">

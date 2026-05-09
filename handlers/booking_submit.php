@@ -73,6 +73,6 @@ $row = [
 repo_add_booking($row);
 flash_set(
     'success',
-    'Booking created: ' . $row['booking_number'] . '. An administrator will review it and upload a gate pass before drivers can accept the job.'
+    'Booking created: ' . $row['booking_number'] . '. Drivers can accept the job right away.'
 );
 redirect(BASE_URL . '/customer/dashboard.php?section=bookings');

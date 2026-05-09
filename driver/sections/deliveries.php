@@ -7,7 +7,7 @@ $del = repo_driver_deliveries((int) $u['id']);
 <div class="card">
   <h2>My Deliveries</h2>
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
-    Use the <strong>gate pass</strong> for the run. After <em>In transit</em>, upload your <strong>EIR</strong> before marking the delivery <em>Complete</em>.
+    Start the run when you are on your way, then mark the delivery <em>Complete</em> when finished.
   </p>
   <?php if (!$del): ?>
     <p style="color:var(--muted)">No active deliveries. Accept jobs from Available Jobs.</p>
@@ -28,14 +28,15 @@ $del = repo_driver_deliveries((int) $u['id']);
 
           $status = (string) ($b['status'] ?? '');
           $bn = (string) ($b['booking_number'] ?? '');
+          $hasGatepass = (string) ($b['gatepass_image'] ?? '') !== '';
           $gpLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=gatepass';
           $eirLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir';
-  $hasEir = false;
-  if (isset($b['id'])) {
-    $stmt = db()->prepare('SELECT 1 FROM eir WHERE booking_id = ? LIMIT 1');
-    $stmt->execute([(int) $b['id']]);
-    $hasEir = (bool) $stmt->fetchColumn();
-  }
+          $hasEir = false;
+          if (isset($b['id'])) {
+            $stmt = db()->prepare('SELECT 1 FROM eir WHERE booking_id = ? LIMIT 1');
+            $stmt->execute([(int) $b['id']]);
+            $hasEir = (bool) $stmt->fetchColumn();
+          }
         ?>
         <div class="driver-job-card">
           <div class="driver-job-card__head">
@@ -65,30 +66,18 @@ $del = repo_driver_deliveries((int) $u['id']);
             </div>
           </div>
 
-          <div class="driver-job-card__docs">
-            <a href="<?= e($gpLink) ?>" target="_blank" rel="noopener noreferrer">View gate pass</a>
-            <?php if ($hasEir): ?>
-              <span class="driver-job-card__docsSep">·</span>
-              <a href="<?= e($eirLink) ?>" target="_blank" rel="noopener noreferrer">View EIR</a>
-            <?php endif; ?>
-          </div>
-
-          <?php if ($status === 'in_transit' && !$hasEir): ?>
-            <form
-              class="driver-job-card__eirForm"
-              method="post"
-              enctype="multipart/form-data"
-              action="../handlers/driver_upload_eir.php"
-              style="margin:0 0 0.75rem 0"
-            >
-              <?= csrf_field() ?>
-              <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
-              <div class="driver-job-card__eirLbl">Upload EIR (required before complete)</div>
-              <div class="driver-job-card__eirRow">
-                <input type="file" name="eir" accept="image/*" required>
-                <button type="submit" class="btn btn--ghost" style="padding:0.35rem 0.55rem;font-size:0.8rem;white-space:nowrap">Upload EIR</button>
-              </div>
-            </form>
+          <?php if ($hasGatepass || $hasEir): ?>
+            <div class="driver-job-card__docs">
+              <?php if ($hasGatepass): ?>
+                <a href="<?= e($gpLink) ?>" target="_blank" rel="noopener noreferrer">View gate pass</a>
+              <?php endif; ?>
+              <?php if ($hasGatepass && $hasEir): ?>
+                <span class="driver-job-card__docsSep">·</span>
+              <?php endif; ?>
+              <?php if ($hasEir): ?>
+                <a href="<?= e($eirLink) ?>" target="_blank" rel="noopener noreferrer">View EIR</a>
+              <?php endif; ?>
+            </div>
           <?php endif; ?>
 
           <div class="driver-job-card__cta">
@@ -99,15 +88,13 @@ $del = repo_driver_deliveries((int) $u['id']);
                 <input type="hidden" name="action" value="in_transit">
                 <button type="submit" class="driver-job-card__ctaBtn">START TRANSIT</button>
               </form>
-            <?php elseif ($status === 'in_transit' && $hasEir): ?>
+            <?php elseif ($status === 'in_transit'): ?>
               <form method="post" action="../handlers/driver_update_delivery.php" style="margin:0">
                 <?= csrf_field() ?>
                 <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
                 <input type="hidden" name="action" value="completed">
                 <button type="submit" class="driver-job-card__ctaBtn">COMPLETE</button>
               </form>
-            <?php elseif ($status === 'in_transit'): ?>
-              <div class="driver-job-card__hint">Upload your EIR above to enable Complete.</div>
             <?php endif; ?>
           </div>
         </div>

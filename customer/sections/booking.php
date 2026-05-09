@@ -12,7 +12,7 @@ foreach (array_keys($vehiclePayouts) as $label) {
 <div class="card">
   <h2>Request a truck</h2>
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
-    Your request is saved as <span class="badge badge--pending">pending</span> until an administrator reviews it and uploads a <strong>gate pass</strong>. Only then can a driver accept the job.
+    Your request is saved as <span class="badge badge--pending">pending</span> and immediately listed for available drivers. A driver can accept it right away.
   </p>
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
     Availability is based on Fleet Management units marked <strong>available</strong>.

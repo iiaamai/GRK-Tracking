@@ -313,7 +313,6 @@ function repo_driver_jobs_available(): array
          WHERE status = 'pending'
            AND (is_locked = 0 OR is_locked IS NULL)
            AND driver_id IS NULL
-           AND gatepass_image IS NOT NULL AND gatepass_image <> ''
          ORDER BY booking_datetime ASC"
     );
     $out = [];

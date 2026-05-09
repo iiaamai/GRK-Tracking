@@ -26,15 +26,6 @@ if ($current === null || (int) ($current['driver_id'] ?? 0) !== (int) $u['id']) 
     redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
 }
 
-if ($action === 'completed') {
-    $stmt = db()->prepare('SELECT 1 FROM eir WHERE booking_id = ? LIMIT 1');
-    $stmt->execute([(int) ($current['id'] ?? 0)]);
-    if (!(bool) $stmt->fetchColumn()) {
-        flash_set('error', 'Upload the Equipment Interchange Receipt (EIR) before completing this delivery.');
-        redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
-    }
-}
-
 repo_update_booking($bn, static function (array $b) use ($u, $action) {
     if ((int) ($b['driver_id'] ?? 0) !== (int) $u['id']) {
         return $b;

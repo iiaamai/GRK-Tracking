@@ -84,21 +84,6 @@ $trackUrl = './dashboard.php';
         </dl>
       </section>
 
-      <?php
-        $status = (string) ($b['status'] ?? '');
-        $eirReady = (string) ($b['eir_image'] ?? '') !== '';
-        $eirLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode((string) ($b['booking_number'] ?? '')) . '&doc=eir';
-      ?>
-      <?php if (in_array($status, ['in_transit', 'completed'], true) && $eirReady): ?>
-        <section class="track-shipment-panel__block" aria-labelledby="track-block-docs">
-          <h3 id="track-block-docs">Documents</h3>
-          <p style="margin:0;color:var(--muted);font-size:0.9rem;">
-            Equipment Interchange Receipt (EIR):
-            <a href="<?= e($eirLink) ?>" target="_blank" rel="noopener noreferrer">View / download</a>
-          </p>
-        </section>
-      <?php endif; ?>
-
       <section class="track-shipment-panel__block" aria-labelledby="track-block-assignment">
         <h3 id="track-block-assignment">Assignment</h3>
         <?php if ($driver): ?>

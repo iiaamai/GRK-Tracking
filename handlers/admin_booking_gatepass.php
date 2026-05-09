@@ -27,7 +27,7 @@ if ($current === null) {
 $file = $_FILES['gatepass'] ?? [];
 $path = booking_store_uploaded_image(is_array($file) ? $file : [], $bn, 'gatepass');
 if ($path === null) {
-    flash_set('error', 'Please upload a valid image (JPG, PNG, WebP, or GIF), max 5MB.');
+    flash_set('error', 'Please upload a valid image (JPG, PNG, WebP, or GIF), max 15MB.');
     redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
 }
 

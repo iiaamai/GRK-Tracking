@@ -5,6 +5,8 @@ declare(strict_types=1);
  * Store booking document images (gate pass, EIR) under /uploads/bookings/.
  * Returns a project-relative web path like "uploads/bookings/EXP-2026-0001_gatepass_abc.jpg".
  */
+const BOOKING_UPLOAD_MAX_BYTES = 15 * 1024 * 1024;
+
 function booking_uploads_dir(): string
 {
     return APP_ROOT . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'bookings';
@@ -35,7 +37,7 @@ function booking_store_uploaded_image(array $file, string $bookingNumber, string
     }
 
     $size = (int) ($file['size'] ?? 0);
-    if ($size <= 0 || $size > 5 * 1024 * 1024) {
+    if ($size <= 0 || $size > BOOKING_UPLOAD_MAX_BYTES) {
         return null;
     }
 

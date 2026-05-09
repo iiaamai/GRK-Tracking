@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+const CLEARANCE_UPLOAD_MAX_BYTES = 15 * 1024 * 1024;
+
 function clearance_uploads_dir(): string
 {
     return APP_ROOT . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'clearances';
@@ -34,7 +36,7 @@ function clearance_store_uploaded_image(array $file, int $driverId, string $date
     }
 
     $size = (int) ($file['size'] ?? 0);
-    if ($size <= 0 || $size > 5 * 1024 * 1024) {
+    if ($size <= 0 || $size > CLEARANCE_UPLOAD_MAX_BYTES) {
         return null;
     }
 

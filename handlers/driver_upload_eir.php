@@ -34,7 +34,7 @@ if ($st !== 'in_transit') {
 $file = $_FILES['eir'] ?? [];
 $path = booking_store_uploaded_image(is_array($file) ? $file : [], $bn, 'eir');
 if ($path === null) {
-    flash_set('error', 'Please upload a valid EIR image (JPG, PNG, WebP, or GIF), max 5MB.');
+    flash_set('error', 'Please upload a valid EIR image (JPG, PNG, WebP, or GIF), max 15MB.');
     redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
 }
 

@@ -65,10 +65,10 @@ if (is_file($envFile) && is_readable($envFile)) {
 define('BASE_URL', '');
 
 /** MySQL (XAMPP default: user root, empty password). Used by data/db.php. */
-define('DB_HOST', (string) (getenv('DB_HOST') !== false ? getenv('DB_HOST') : ''));
-define('DB_NAME', (string) (getenv('DB_NAME') !== false ? getenv('DB_NAME') : ''));
-define('DB_USER', (string) (getenv('DB_USER') !== false ? getenv('DB_USER') : ''));
-define('DB_PASS', (string) (getenv('DB_PASS') !== false ? getenv('DB_PASS') : ''));
+define('DB_HOST', 'gk-database.cfym8s4s083v.ap-southeast-1.rds.amazonaws.com');
+define('DB_NAME', 'express_logistics');
+define('DB_USER', 'admin');
+define('DB_PASS', 'GK_truckingservices_mgmt');
 define('DB_CHARSET', 'utf8mb4');
 
 /** AWS (S3 uploads). Prefer setting these in .env. */

@@ -32,9 +32,11 @@ if ($st !== 'in_transit') {
 }
 
 $file = $_FILES['eir'] ?? [];
-$path = booking_store_uploaded_image(is_array($file) ? $file : [], $bn, 'eir');
+$res = booking_store_uploaded_image_with_error(is_array($file) ? $file : [], $bn, 'eir');
+$path = $res['path'];
 if ($path === null) {
-    flash_set('error', 'Please upload a valid EIR image (JPG, PNG, WebP, or GIF), max 15MB.');
+    $reason = (string) ($res['error'] ?? 'Upload failed.');
+    flash_set('error', 'EIR upload failed: ' . $reason);
     redirect(BASE_URL . '/driver/dashboard.php?section=deliveries');
 }
 

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 $u = auth_user();
-$jobs = repo_driver_jobs_available();
+$jobs = repo_driver_jobs_available((string) ($u['vehicle_type'] ?? ''));
 $active = repo_driver_deliveries((int) ($u['id'] ?? 0));
 $hasActive = count($active) > 0;
 $vehStatus = repo_vehicle_status_by_plate_number((string) ($u['plate'] ?? ''));
@@ -15,7 +15,7 @@ $blockReason = $hasActive
 <div class="card">
   <h2>Available Jobs</h2>
   <p style="margin:0 0 1rem;color:var(--muted);font-size:0.9rem;">
-    New customer bookings appear here as soon as they are submitted. Accept a job to add it to your deliveries.
+    Only jobs that match your profile vehicle type are listed. Accept a job to add it to your deliveries.
   </p>
   <?php if ($blocked): ?>
     <div class="flash flash--err" style="margin:0 0 1rem">

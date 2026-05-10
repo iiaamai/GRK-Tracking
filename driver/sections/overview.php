@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 $u = auth_user();
-$jobs = repo_driver_jobs_available();
+$jobs = repo_driver_jobs_available((string) ($u['vehicle_type'] ?? ''));
 $del = repo_driver_deliveries((int) $u['id']);
 $completed = repo_driver_completed_deliveries_count((int) $u['id']);
 ?>

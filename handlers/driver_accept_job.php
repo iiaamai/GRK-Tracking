@@ -45,6 +45,11 @@ if (
     redirect(BASE_URL . '/driver/dashboard.php?section=jobs');
 }
 
+if (!repo_driver_vehicle_type_matches_booking((string) ($u['vehicle_type'] ?? ''), (string) ($current['vehicle_type'] ?? ''))) {
+    flash_set('error', 'This job requires a different vehicle type than the one on your profile.');
+    redirect(BASE_URL . '/driver/dashboard.php?section=jobs');
+}
+
 // Auto-link vehicle by matching driver's plate to vehicles.plate_number.
 $vehicleId = null;
 try {

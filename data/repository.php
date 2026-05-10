@@ -331,8 +331,23 @@ function repo_customer_bookings(int $customerId): array
     return $out;
 }
 
-function repo_driver_jobs_available(): array
+/**
+ * True when the driver's profile vehicle type matches the booking's required type (normalized fleet class).
+ */
+function repo_driver_vehicle_type_matches_booking(string $driverVehicleType, string $bookingVehicleType): bool
 {
+    $d = repo_normalize_vehicle_type_to_fleet_type($driverVehicleType);
+    $b = repo_normalize_vehicle_type_to_fleet_type($bookingVehicleType);
+
+    return $d !== '' && $b !== '' && $d === $b;
+}
+
+/**
+ * Pending jobs the driver may accept: same normalized vehicle type as the driver's assigned type.
+ */
+function repo_driver_jobs_available(string $driverVehicleType): array
+{
+    $driverNorm = repo_normalize_vehicle_type_to_fleet_type($driverVehicleType);
     $pdo = db();
     $stmt = $pdo->query(
         "SELECT b.*, c.name AS customer_name FROM bookings b
@@ -344,6 +359,9 @@ function repo_driver_jobs_available(): array
     );
     $out = [];
     foreach ($stmt->fetchAll() as $row) {
+        if ($driverNorm === '' || !repo_driver_vehicle_type_matches_booking($driverVehicleType, (string) ($row['vehicle_type'] ?? ''))) {
+            continue;
+        }
         $out[] = repo_map_booking_row($row);
     }
 

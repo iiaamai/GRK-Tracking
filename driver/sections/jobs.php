@@ -67,7 +67,12 @@ $blockReason = $hasActive
           </div>
 
           <div class="driver-job-card__cta">
-            <form method="post" action="../handlers/driver_accept_job.php" style="margin:0">
+            <form
+              method="post"
+              action="../handlers/driver_accept_job.php"
+              style="margin:0"
+              onsubmit='return confirm(<?= json_encode('Accept job: ' . $route . '? It will move to My Deliveries.', JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>);'
+            >
               <?= csrf_field() ?>
               <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
               <button

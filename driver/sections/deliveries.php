@@ -58,14 +58,24 @@ $del = repo_driver_deliveries((int) $u['id']);
 
           <div class="driver-job-card__cta">
             <?php if ($status === 'accepted'): ?>
-              <form method="post" action="../handlers/driver_update_delivery.php" style="margin:0">
+              <form
+                method="post"
+                action="../handlers/driver_update_delivery.php"
+                style="margin:0"
+                onsubmit="return confirm('Start transit now? Only confirm when you are on the way.');"
+              >
                 <?= csrf_field() ?>
                 <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
                 <input type="hidden" name="action" value="in_transit">
                 <button type="submit" class="driver-job-card__ctaBtn">START TRANSIT</button>
               </form>
             <?php elseif ($status === 'in_transit'): ?>
-              <form method="post" action="../handlers/driver_update_delivery.php" style="margin:0">
+              <form
+                method="post"
+                action="../handlers/driver_update_delivery.php"
+                style="margin:0"
+                onsubmit="return confirm('Mark this delivery as complete?');"
+              >
                 <?= csrf_field() ?>
                 <input type="hidden" name="booking_number" value="<?= e($b['booking_number'] ?? '') ?>">
                 <input type="hidden" name="action" value="completed">

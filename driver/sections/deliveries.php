@@ -18,7 +18,7 @@ $del = repo_driver_deliveries((int) $u['id']);
           $pickup = (string) ($b['pickup'] ?? '');
           $dropoff = (string) ($b['dropoff'] ?? '');
           $route = $pickup . ' → ' . $dropoff;
-          $bizName = (string) ($b['name'] ?? '—');
+          $bizName = (string) ($b['customer_name'] ?? $b['name'] ?? '—');
           $cargo = (string) ($b['cargo_desc'] ?? '—');
           $vehicleType = (string) ($b['vehicle_type'] ?? '—');
           $dtVal = (string) ($b['booking_datetime'] ?? '');
@@ -27,16 +27,6 @@ $del = repo_driver_deliveries((int) $u['id']);
           $payoutStr = format_php_money($payoutVal !== null ? (float) $payoutVal : null);
 
           $status = (string) ($b['status'] ?? '');
-          $bn = (string) ($b['booking_number'] ?? '');
-          $hasGatepass = (string) ($b['gatepass_image'] ?? '') !== '';
-          $gpLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=gatepass';
-          $eirLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir';
-          $hasEir = false;
-          if (isset($b['id'])) {
-            $stmt = db()->prepare('SELECT 1 FROM eir WHERE booking_id = ? LIMIT 1');
-            $stmt->execute([(int) $b['id']]);
-            $hasEir = (bool) $stmt->fetchColumn();
-          }
         ?>
         <div class="driver-job-card">
           <div class="driver-job-card__head">
@@ -65,20 +55,6 @@ $del = repo_driver_deliveries((int) $u['id']);
               <div class="driver-job-card__value"><?= e(format_timestamp($dtVal, 'h:i A')) ?></div>
             </div>
           </div>
-
-          <?php if ($hasGatepass || $hasEir): ?>
-            <div class="driver-job-card__docs">
-              <?php if ($hasGatepass): ?>
-                <a href="<?= e($gpLink) ?>" target="_blank" rel="noopener noreferrer">View gate pass</a>
-              <?php endif; ?>
-              <?php if ($hasGatepass && $hasEir): ?>
-                <span class="driver-job-card__docsSep">·</span>
-              <?php endif; ?>
-              <?php if ($hasEir): ?>
-                <a href="<?= e($eirLink) ?>" target="_blank" rel="noopener noreferrer">View EIR</a>
-              <?php endif; ?>
-            </div>
-          <?php endif; ?>
 
           <div class="driver-job-card__cta">
             <?php if ($status === 'accepted'): ?>

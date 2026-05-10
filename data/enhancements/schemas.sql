@@ -72,15 +72,12 @@ CREATE TABLE IF NOT EXISTS `fleet` (
   KEY `idx_fleet_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Legacy bookings table shape so later ALTER/SELECT won't fail.
+-- Bookings (no denormalized customer copy; no document image columns).
 CREATE TABLE IF NOT EXISTS `bookings` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `booking_number` VARCHAR(32) NOT NULL,
   `customer_id` INT UNSIGNED NOT NULL,
-  `username` VARCHAR(64) NOT NULL,
-  `name` VARCHAR(120) NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
-  `mobile` VARCHAR(40) NOT NULL,
+  `user_id` INT UNSIGNED NOT NULL,
   `booking_datetime` TIMESTAMP NOT NULL,
   `posting_date` TIMESTAMP NOT NULL,
   `vehicle_type` VARCHAR(64) NOT NULL,
@@ -88,15 +85,20 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   `dropoff` VARCHAR(255) NOT NULL,
   `cargo_desc` TEXT NOT NULL,
   `additional_requirements` TEXT NOT NULL,
-  `status` VARCHAR(32) NOT NULL DEFAULT 'pending',
+  `status` ENUM('pending','accepted','in_transit','completed','cancelled') NOT NULL DEFAULT 'pending',
   `driver_id` INT UNSIGNED NULL,
+  `vehicle_id` INT UNSIGNED NULL,
+  `is_locked` BOOLEAN NOT NULL DEFAULT FALSE,
+  `accepted_at` TIMESTAMP NULL DEFAULT NULL,
   `payout` DECIMAL(12, 2) NULL,
-  `gatepass_image` VARCHAR(512) NULL,
-  `eir_image` VARCHAR(512) NULL,
+  `payment_receipt_reference` VARCHAR(13) NULL,
+  `driver_completion_status` ENUM('clear','unclear') NOT NULL DEFAULT 'unclear',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_bookings_number` (`booking_number`),
   KEY `idx_bookings_customer` (`customer_id`),
+  KEY `idx_bookings_user` (`user_id`),
   KEY `idx_bookings_driver` (`driver_id`),
+  KEY `idx_bookings_vehicle` (`vehicle_id`),
   KEY `idx_bookings_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -128,13 +130,6 @@ CREATE TABLE IF NOT EXISTS `vehicles` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_vehicles_plate` (`plate_number`),
   KEY `idx_vehicles_status` (`status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS `eir` (
-  `booking_id` INT UNSIGNED NOT NULL,
-  `eir_file` VARCHAR(512) NOT NULL,
-  `uploaded_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`booking_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `earnings_reports` (
@@ -196,18 +191,30 @@ ON DUPLICATE KEY UPDATE
   capacity_kg = VALUES(capacity_kg),
   status = VALUES(status);
 
--- Ensure `bookings.eir_image` exists so EIR backfill won't fail
-ALTER TABLE `bookings`
-  ADD COLUMN IF NOT EXISTS `eir_image` VARCHAR(512) NULL;
-
--- Add new booking columns
+-- Add new booking columns (legacy installs may be missing these)
 ALTER TABLE `bookings`
   ADD COLUMN IF NOT EXISTS `user_id` INT UNSIGNED NULL AFTER `customer_id`,
   ADD COLUMN IF NOT EXISTS `vehicle_id` INT UNSIGNED NULL AFTER `driver_id`,
   ADD COLUMN IF NOT EXISTS `is_locked` BOOLEAN NOT NULL DEFAULT FALSE AFTER `vehicle_id`,
-  ADD COLUMN IF NOT EXISTS `accepted_at` TIMESTAMP NULL DEFAULT NULL AFTER `is_locked`;
+  ADD COLUMN IF NOT EXISTS `accepted_at` TIMESTAMP NULL DEFAULT NULL AFTER `is_locked`,
+  ADD COLUMN IF NOT EXISTS `payment_receipt_reference` VARCHAR(13) NULL AFTER `payout`,
+  ADD COLUMN IF NOT EXISTS `driver_completion_status` ENUM('clear','unclear') NOT NULL DEFAULT 'unclear' AFTER `payment_receipt_reference`;
 
 UPDATE `bookings` SET `user_id` = `customer_id` WHERE `user_id` IS NULL;
+
+ALTER TABLE `bookings`
+  MODIFY COLUMN `user_id` INT UNSIGNED NOT NULL;
+
+-- Retire document uploads and denormalized customer fields on bookings
+DROP TABLE IF EXISTS `eir`;
+
+ALTER TABLE `bookings`
+  DROP COLUMN IF EXISTS `gatepass_image`,
+  DROP COLUMN IF EXISTS `eir_image`,
+  DROP COLUMN IF EXISTS `username`,
+  DROP COLUMN IF EXISTS `name`,
+  DROP COLUMN IF EXISTS `email`,
+  DROP COLUMN IF EXISTS `mobile`;
 
 -- Normalize statuses first, then tighten to ENUM
 UPDATE `bookings` SET `status` = 'pending' WHERE `status` IN ('ready_for_assignment');
@@ -218,21 +225,10 @@ WHERE `status` NOT IN ('pending','accepted','in_transit','completed','cancelled'
 ALTER TABLE `bookings`
   MODIFY COLUMN `status` ENUM('pending','accepted','in_transit','completed','cancelled') NOT NULL DEFAULT 'pending';
 
--- Driver clearance columns
+-- Driver clearance columns (optional; admin daily-clear UI may be removed)
 ALTER TABLE `drivers`
   ADD COLUMN IF NOT EXISTS `status` ENUM('cleared','uncleared') NOT NULL DEFAULT 'uncleared',
   ADD COLUMN IF NOT EXISTS `last_cleared_at` TIMESTAMP NULL DEFAULT NULL;
-
--- Move eir_image into eir table
-INSERT INTO `eir` (`booking_id`, `eir_file`, `uploaded_at`)
-SELECT b.id, b.eir_image, CURRENT_TIMESTAMP
-FROM bookings b
-WHERE b.eir_image IS NOT NULL AND b.eir_image <> ''
-ON DUPLICATE KEY UPDATE
-  eir_file = VALUES(eir_file),
-  uploaded_at = VALUES(uploaded_at);
-
-ALTER TABLE `bookings` DROP COLUMN IF EXISTS `eir_image`;
 
 -- ---------------------------------------------------------------------------
 -- Foreign keys (conditionally added; safe to re-run)
@@ -241,13 +237,18 @@ ALTER TABLE `bookings` DROP COLUMN IF EXISTS `eir_image`;
 -- Ensure values won't violate FKs before adding them.
 UPDATE `bookings` b
 LEFT JOIN `users` u ON u.id = b.user_id
-SET b.user_id = NULL
+SET b.user_id = b.customer_id
 WHERE b.user_id IS NOT NULL AND u.id IS NULL;
 
 UPDATE `bookings` b
 LEFT JOIN `vehicles` v ON v.id = b.vehicle_id
 SET b.vehicle_id = NULL
 WHERE b.vehicle_id IS NOT NULL AND v.id IS NULL;
+
+UPDATE `bookings` b
+LEFT JOIN `drivers` d ON d.id = b.driver_id
+SET b.driver_id = NULL
+WHERE b.driver_id IS NOT NULL AND d.id IS NULL;
 
 SET @has_fk := (
   SELECT COUNT(*)
@@ -283,13 +284,28 @@ SET @has_fk := (
   SELECT COUNT(*)
   FROM information_schema.TABLE_CONSTRAINTS
   WHERE CONSTRAINT_SCHEMA = @db
-    AND TABLE_NAME = 'eir'
-    AND CONSTRAINT_NAME = 'fk_eir_booking'
+    AND TABLE_NAME = 'bookings'
+    AND CONSTRAINT_NAME = 'fk_bookings_customer'
     AND CONSTRAINT_TYPE = 'FOREIGN KEY'
 );
 SET @sql := IF(
   @has_fk = 0,
-  'ALTER TABLE `eir` ADD CONSTRAINT `fk_eir_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON UPDATE CASCADE ON DELETE CASCADE',
+  'ALTER TABLE `bookings` ADD CONSTRAINT `fk_bookings_customer` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT',
+  'SELECT 1'
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @has_fk := (
+  SELECT COUNT(*)
+  FROM information_schema.TABLE_CONSTRAINTS
+  WHERE CONSTRAINT_SCHEMA = @db
+    AND TABLE_NAME = 'bookings'
+    AND CONSTRAINT_NAME = 'fk_bookings_driver'
+    AND CONSTRAINT_TYPE = 'FOREIGN KEY'
+);
+SET @sql := IF(
+  @has_fk = 0,
+  'ALTER TABLE `bookings` ADD CONSTRAINT `fk_bookings_driver` FOREIGN KEY (`driver_id`) REFERENCES `drivers` (`id`) ON UPDATE CASCADE ON DELETE SET NULL',
   'SELECT 1'
 );
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;

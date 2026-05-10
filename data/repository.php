@@ -26,8 +26,16 @@ function repo_map_booking_row(array $row): array
         ? (string) $row['accepted_at'] : null;
     $row['payout'] = isset($row['payout']) && $row['payout'] !== null && $row['payout'] !== ''
         ? (float) $row['payout'] : null;
-    $row['gatepass_image'] = isset($row['gatepass_image']) && $row['gatepass_image'] !== null && $row['gatepass_image'] !== ''
-        ? (string) $row['gatepass_image'] : null;
+    $pr = $row['payment_receipt_reference'] ?? null;
+    $row['payment_receipt_reference'] = $pr !== null && $pr !== '' ? (string) $pr : null;
+    $row['driver_completion_status'] = (string) ($row['driver_completion_status'] ?? 'unclear');
+    if (isset($row['customer_name'])) {
+        $row['customer_name'] = (string) $row['customer_name'];
+    }
+    if (isset($row['driver_name'])) {
+        $row['driver_name'] = (string) $row['driver_name'];
+    }
+    $row['name'] = (string) ($row['customer_name'] ?? $row['name'] ?? '');
 
     return $row;
 }
@@ -62,7 +70,11 @@ function repo_bookings(): array
 {
     $pdo = db();
     $stmt = $pdo->query(
-        'SELECT * FROM bookings ORDER BY booking_datetime DESC, id DESC'
+        'SELECT b.*, c.name AS customer_name, d.name AS driver_name
+         FROM bookings b
+         INNER JOIN customers c ON c.id = b.customer_id
+         LEFT JOIN drivers d ON d.id = b.driver_id
+         ORDER BY b.booking_datetime DESC, b.id DESC'
     );
     $out = [];
     foreach ($stmt->fetchAll() as $row) {
@@ -102,24 +114,19 @@ function repo_save_bookings(array $bookings): void
 
 function repo_upsert_booking_row(array $b): void
 {
+    unset($b['customer_name'], $b['driver_name']);
     $pdo = db();
     $sql = <<<'SQL'
 INSERT INTO bookings (
-  booking_number, customer_id, user_id, username, name, email, mobile,
+  booking_number, customer_id, user_id,
   booking_datetime, posting_date, vehicle_type, pickup, dropoff,
   cargo_desc, additional_requirements, status, driver_id, vehicle_id, is_locked, accepted_at, payout,
-  gatepass_image
+  payment_receipt_reference, driver_completion_status
 ) VALUES (
-  ?,?,?,?,?,?,?,  -- booking_number..mobile (7)
-  ?,?,?,?,?,?,    -- booking_datetime..dropoff (6) => 13
-  ?,?,?,?,?,?,?,? -- cargo_desc..payout (8) => 21
+  ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
 ) ON DUPLICATE KEY UPDATE
   customer_id = VALUES(customer_id),
   user_id = VALUES(user_id),
-  username = VALUES(username),
-  name = VALUES(name),
-  email = VALUES(email),
-  mobile = VALUES(mobile),
   booking_datetime = VALUES(booking_datetime),
   posting_date = VALUES(posting_date),
   vehicle_type = VALUES(vehicle_type),
@@ -133,7 +140,8 @@ INSERT INTO bookings (
   is_locked = VALUES(is_locked),
   accepted_at = VALUES(accepted_at),
   payout = VALUES(payout),
-  gatepass_image = VALUES(gatepass_image)
+  payment_receipt_reference = VALUES(payment_receipt_reference),
+  driver_completion_status = VALUES(driver_completion_status)
 SQL;
     $stmt = $pdo->prepare($sql);
     $userId = $b['user_id'] ?? null;
@@ -142,15 +150,16 @@ SQL;
     $isLocked = (bool) ($b['is_locked'] ?? false);
     $acceptedAt = $b['accepted_at'] ?? null;
     $payout = $b['payout'] ?? null;
-    $gate = $b['gatepass_image'] ?? null;
+    $payRef = $b['payment_receipt_reference'] ?? null;
+    $payRef = $payRef !== null && trim((string) $payRef) !== '' ? trim((string) $payRef) : null;
+    $driverCompletion = (string) ($b['driver_completion_status'] ?? 'unclear');
+    if (!in_array($driverCompletion, ['clear', 'unclear'], true)) {
+        $driverCompletion = 'unclear';
+    }
     $stmt->execute([
         $b['booking_number'] ?? '',
         (int) ($b['customer_id'] ?? 0),
         $userId !== null ? (int) $userId : (int) ($b['customer_id'] ?? 0),
-        (string) ($b['username'] ?? ''),
-        (string) ($b['name'] ?? ''),
-        (string) ($b['email'] ?? ''),
-        (string) ($b['mobile'] ?? ''),
         (string) ($b['booking_datetime'] ?? ''),
         (string) ($b['posting_date'] ?? ''),
         (string) ($b['vehicle_type'] ?? ''),
@@ -164,7 +173,8 @@ SQL;
         $isLocked ? 1 : 0,
         $acceptedAt !== null && $acceptedAt !== '' ? (string) $acceptedAt : null,
         $payout !== null ? (string) $payout : null,
-        $gate !== null && $gate !== '' ? (string) $gate : null,
+        $payRef,
+        $driverCompletion,
     ]);
 }
 
@@ -268,7 +278,13 @@ function repo_update_booking(string $bookingNumber, callable $fn): void
 function repo_find_booking_by_number(string $num): ?array
 {
     $pdo = db();
-    $stmt = $pdo->prepare('SELECT * FROM bookings WHERE booking_number = ? LIMIT 1');
+    $stmt = $pdo->prepare(
+        'SELECT b.*, c.name AS customer_name, d.name AS driver_name
+         FROM bookings b
+         INNER JOIN customers c ON c.id = b.customer_id
+         LEFT JOIN drivers d ON d.id = b.driver_id
+         WHERE b.booking_number = ? LIMIT 1'
+    );
     $stmt->execute([$num]);
     $row = $stmt->fetch();
     if (!$row) {
@@ -282,7 +298,12 @@ function repo_find_bookings_by_username(string $user): array
 {
     $u = strtolower(trim($user));
     $pdo = db();
-    $stmt = $pdo->prepare('SELECT * FROM bookings WHERE LOWER(username) = ? ORDER BY booking_datetime DESC');
+    $stmt = $pdo->prepare(
+        'SELECT b.*, c.name AS customer_name FROM bookings b
+         INNER JOIN customers c ON c.id = b.customer_id
+         WHERE LOWER(c.username) = ?
+         ORDER BY b.booking_datetime DESC'
+    );
     $stmt->execute([$u]);
     $out = [];
     foreach ($stmt->fetchAll() as $row) {
@@ -295,7 +316,12 @@ function repo_find_bookings_by_username(string $user): array
 function repo_customer_bookings(int $customerId): array
 {
     $pdo = db();
-    $stmt = $pdo->prepare('SELECT * FROM bookings WHERE customer_id = ? ORDER BY booking_datetime DESC');
+    $stmt = $pdo->prepare(
+        'SELECT b.*, c.name AS customer_name FROM bookings b
+         INNER JOIN customers c ON c.id = b.customer_id
+         WHERE b.customer_id = ?
+         ORDER BY b.booking_datetime DESC'
+    );
     $stmt->execute([$customerId]);
     $out = [];
     foreach ($stmt->fetchAll() as $row) {
@@ -309,11 +335,12 @@ function repo_driver_jobs_available(): array
 {
     $pdo = db();
     $stmt = $pdo->query(
-        "SELECT * FROM bookings
-         WHERE status = 'pending'
-           AND (is_locked = 0 OR is_locked IS NULL)
-           AND driver_id IS NULL
-         ORDER BY booking_datetime ASC"
+        "SELECT b.*, c.name AS customer_name FROM bookings b
+         INNER JOIN customers c ON c.id = b.customer_id
+         WHERE b.status = 'pending'
+           AND (b.is_locked = 0 OR b.is_locked IS NULL)
+           AND b.driver_id IS NULL
+         ORDER BY b.booking_datetime ASC"
     );
     $out = [];
     foreach ($stmt->fetchAll() as $row) {
@@ -327,7 +354,10 @@ function repo_driver_deliveries(int $driverId): array
 {
     $pdo = db();
     $stmt = $pdo->prepare(
-        "SELECT * FROM bookings WHERE driver_id = ? AND status IN ('accepted','in_transit') ORDER BY booking_datetime ASC"
+        "SELECT b.*, c.name AS customer_name FROM bookings b
+         INNER JOIN customers c ON c.id = b.customer_id
+         WHERE b.driver_id = ? AND b.status IN ('accepted','in_transit')
+         ORDER BY b.booking_datetime ASC"
     );
     $stmt->execute([$driverId]);
     $out = [];
@@ -382,6 +412,26 @@ function repo_normalize_vehicle_type_to_fleet_type(string $vehicleType): string
     return trim($vehicleType);
 }
 
+function repo_pending_bookings_count_for_fleet_type(string $fleetType): int
+{
+    if ($fleetType === '') {
+        return 0;
+    }
+    $pdo = db();
+    $stmt = $pdo->query("SELECT vehicle_type FROM bookings WHERE status = 'pending'");
+    $n = 0;
+    foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $vt) {
+        if (repo_normalize_vehicle_type_to_fleet_type((string) $vt) === $fleetType) {
+            ++$n;
+        }
+    }
+
+    return $n;
+}
+
+/**
+ * Remaining booking slots for a customer-facing vehicle type: available fleet units minus unassigned pending bookings.
+ */
 function repo_available_vehicles_count_for_booking_vehicle_type(string $bookingVehicleType): int
 {
     $type = repo_normalize_vehicle_type_to_fleet_type($bookingVehicleType);
@@ -391,8 +441,10 @@ function repo_available_vehicles_count_for_booking_vehicle_type(string $bookingV
     $pdo = db();
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM vehicles WHERE type = ? AND status = 'available'");
     $stmt->execute([$type]);
+    $physical = (int) $stmt->fetchColumn();
+    $pending = repo_pending_bookings_count_for_fleet_type($type);
 
-    return (int) $stmt->fetchColumn();
+    return max(0, $physical - $pending);
 }
 
 function repo_vehicle_status_by_plate_number(string $plateNumber): ?string
@@ -464,28 +516,28 @@ function repo_completed_deliveries_for_range(string $startYmd, string $endYmd): 
     $pdo = db();
     $stmt = $pdo->prepare(
         "SELECT
-           id,
-           booking_number,
-           customer_id,
-           user_id,
-           username,
-           name,
-           email,
-           mobile,
-           booking_datetime,
-           posting_date,
-           vehicle_type,
-           pickup,
-           dropoff,
-           status,
-           driver_id,
-           vehicle_id,
-           accepted_at,
-           payout
-         FROM bookings
-         WHERE status = 'completed'
-           AND DATE(booking_datetime) BETWEEN ? AND ?
-         ORDER BY booking_datetime ASC, id ASC"
+           b.id,
+           b.booking_number,
+           b.customer_id,
+           b.user_id,
+           b.booking_datetime,
+           b.posting_date,
+           b.vehicle_type,
+           b.pickup,
+           b.dropoff,
+           b.status,
+           b.driver_id,
+           b.vehicle_id,
+           b.accepted_at,
+           b.payout,
+           c.name AS customer_name,
+           d.name AS driver_name
+         FROM bookings b
+         INNER JOIN customers c ON c.id = b.customer_id
+         LEFT JOIN drivers d ON d.id = b.driver_id
+         WHERE b.status = 'completed'
+           AND DATE(b.booking_datetime) BETWEEN ? AND ?
+         ORDER BY b.booking_datetime ASC, b.id ASC"
     );
     $stmt->execute([$startYmd, $endYmd]);
     $rows = $stmt->fetchAll();

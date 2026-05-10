@@ -50,10 +50,6 @@ $row = [
     'booking_number' => repo_next_booking_number(),
     'customer_id' => (int) $u['id'],
     'user_id' => (int) $u['id'],
-    'username' => (string) $u['username'],
-    'name' => $name,
-    'email' => $email,
-    'mobile' => $mobile,
     'booking_datetime' => $booking_dt,
     'posting_date' => $now->format('Y-m-d'),
     'vehicle_type' => $vehicle_type,
@@ -67,7 +63,8 @@ $row = [
     'is_locked' => false,
     'accepted_at' => null,
     'payout' => $payout,
-    'gatepass_image' => null,
+    'payment_receipt_reference' => null,
+    'driver_completion_status' => 'unclear',
 ];
 
 repo_add_booking($row);

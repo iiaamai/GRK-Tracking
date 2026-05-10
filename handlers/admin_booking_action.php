@@ -26,6 +26,26 @@ if ($act === 'delete') {
     redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
 }
 
+if ($act === 'update_meta') {
+    $ref = trim((string) ($_POST['payment_receipt_reference'] ?? ''));
+    if (!booking_payment_receipt_reference_valid($ref)) {
+        flash_set('error', 'Payment receipt must be empty or exactly 13 digits.');
+        redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
+    }
+    $dc = trim((string) ($_POST['driver_completion_status'] ?? 'unclear'));
+    if (!in_array($dc, ['clear', 'unclear'], true)) {
+        $dc = 'unclear';
+    }
+    repo_update_booking($bn, static function (array $b) use ($ref, $dc) {
+        $b['payment_receipt_reference'] = $ref === '' ? null : $ref;
+        $b['driver_completion_status'] = $dc;
+
+        return $b;
+    });
+    flash_set('success', 'Payment receipt and driver completion saved.');
+    redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
+}
+
 $allowed = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
 if (!in_array($act, $allowed, true)) {
     flash_set('error', 'Invalid status.');
@@ -34,6 +54,7 @@ if (!in_array($act, $allowed, true)) {
 
 repo_update_booking($bn, static function (array $b) use ($act) {
     $b['status'] = $act;
+
     return $b;
 });
 

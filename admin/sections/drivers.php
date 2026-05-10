@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 $rows = repo_drivers();
 $vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', 'Reefer / specialized'];
-$today = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y-m-d');
 ?>
 <div class="card">
   <h2>Add driver</h2>
@@ -64,9 +63,7 @@ $today = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format
           <tr>
             <th>ID</th>
             <th>Username</th>
-            <th>Status</th>
             <th>Update</th>
-            <th>Daily clear</th>
             <th style="width:90px"></th>
           </tr>
         </thead>
@@ -75,13 +72,6 @@ $today = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format
             <tr>
               <td><?= (int) ($r['id'] ?? 0) ?></td>
               <td><?= e($r['username'] ?? '') ?></td>
-              <td>
-                <?php $st = (string) ($r['status'] ?? 'uncleared'); ?>
-                <strong><?= e($st) ?></strong>
-                <?php if (!empty($r['last_cleared_at'])): ?>
-                  <div style="color:var(--muted);font-size:0.8rem">Last: <?= e(format_timestamp((string) $r['last_cleared_at'], 'M j, Y')) ?></div>
-                <?php endif; ?>
-              </td>
               <td>
                 <form method="post" action="../handlers/admin_driver_action.php" style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:flex-end;margin:0">
                   <?= csrf_field() ?>
@@ -117,18 +107,6 @@ $today = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format
                   </div>
                   <button type="submit" class="btn btn--ghost" style="padding:0.45rem 0.65rem;font-size:0.85rem">Save</button>
                 </form>
-              </td>
-              <td style="min-width:240px">
-                <?php if (($r['status'] ?? '') === 'cleared' && isset($r['last_cleared_at']) && str_starts_with((string) $r['last_cleared_at'], $today)): ?>
-                  <span style="color:var(--muted)">Cleared today</span>
-                <?php else: ?>
-                  <form method="post" enctype="multipart/form-data" action="../handlers/admin_driver_clear.php" style="margin:0;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap" onsubmit="return confirm('Clear this driver for today and upload the signed confirmation?');">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="driver_id" value="<?= (int) ($r['id'] ?? 0) ?>">
-                    <input type="file" name="confirmation" accept="image/*" required style="max-width:200px;font-size:0.8rem">
-                    <button type="submit" class="btn btn--ghost" style="padding:0.35rem 0.55rem;font-size:0.8rem;white-space:nowrap">Clear driver</button>
-                  </form>
-                <?php endif; ?>
               </td>
               <td>
                 <form method="post" action="../handlers/admin_driver_action.php" style="margin:0" onsubmit="return confirm('Remove this driver?');">

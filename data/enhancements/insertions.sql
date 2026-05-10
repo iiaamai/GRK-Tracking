@@ -97,40 +97,19 @@ ON DUPLICATE KEY UPDATE
 -- - `is_locked/accepted_at` populated to reflect "accepted then completed".
 
 INSERT INTO `bookings` (
-  `booking_number`, `customer_id`, `user_id`, `username`, `name`, `email`, `mobile`,
+  `booking_number`, `customer_id`, `user_id`,
   `booking_datetime`, `posting_date`, `vehicle_type`, `pickup`, `dropoff`,
   `cargo_desc`, `additional_requirements`, `status`, `driver_id`, `vehicle_id`,
-  `is_locked`, `accepted_at`, `payout`, `gatepass_image`
+  `is_locked`, `accepted_at`, `payout`, `payment_receipt_reference`, `driver_completion_status`
 ) VALUES
-  -- April (non-peak / low volume)
-  ('EXP-2024-0401', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-04-03 09:00:00', '2024-04-02 08:00:00', '6-wheeler (Isuzu / Fuso)', 'QC Warehouse', 'Makati', 'Palletized goods', '', 'completed', 1, NULL, TRUE, '2024-04-02 10:00:00', 14500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-0402', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-04-18 14:00:00', '2024-04-17 09:00:00', 'L300 van', 'Parañaque', 'BGC', 'Cartons', '', 'completed', 2, NULL, TRUE, '2024-04-17 11:00:00', 4500.00, 'uploads/bookings/demo-gatepass.png'),
-
-  -- Other months (moderate volume)
-  ('EXP-2024-0101', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-01-12 08:30:00', '2024-01-11 08:00:00', '4-wheeler truck', 'Valenzuela', 'Ortigas', 'Mixed cargo', '', 'completed', 3, NULL, TRUE, '2024-01-11 10:00:00', 9200.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-0201', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-02-07 10:00:00', '2024-02-06 09:00:00', 'L300 van', 'Pasay', 'Manila', 'Retail cartons', '', 'completed', 2, NULL, TRUE, '2024-02-06 12:00:00', 4500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-0301', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-03-22 13:00:00', '2024-03-21 10:00:00', '6-wheeler (Isuzu / Fuso)', 'Marikina', 'Taguig', 'Pallets', '', 'completed', 4, NULL, TRUE, '2024-03-21 12:00:00', 14500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-0501', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-05-09 07:30:00', '2024-05-08 09:00:00', '4-wheeler truck', 'Cavite', 'Makati', 'Boxes', '', 'completed', 5, NULL, TRUE, '2024-05-08 11:00:00', 9200.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-0601', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-06-14 09:30:00', '2024-06-13 08:00:00', 'Reefer / specialized', 'QC', 'Pasig', 'Chilled cargo', '', 'completed', 6, NULL, TRUE, '2024-06-13 10:00:00', 18500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-0701', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-07-03 11:00:00', '2024-07-02 09:00:00', 'L300 van', 'Mandaluyong', 'Manila', 'Returns', '', 'completed', 2, NULL, TRUE, '2024-07-02 11:00:00', 4500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-0801', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-08-19 15:00:00', '2024-08-18 08:00:00', '6-wheeler (Isuzu / Fuso)', 'Bulacan', 'Manila', 'Pallets', '', 'completed', 7, NULL, TRUE, '2024-08-18 12:00:00', 14500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-0901', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-09-10 08:00:00', '2024-09-09 09:00:00', '4-wheeler truck', 'Laguna', 'Pasay', 'Cartons', '', 'completed', 3, NULL, TRUE, '2024-09-09 11:00:00', 9200.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1001', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-10-05 09:00:00', '2024-10-04 08:00:00', 'L300 van', 'Makati', 'BGC', 'Samples', '', 'completed', 2, NULL, TRUE, '2024-10-04 10:00:00', 4500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1101', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-11-16 14:30:00', '2024-11-15 08:00:00', '6-wheeler (Isuzu / Fuso)', 'Manila', 'Quezon City', 'Pallets', '', 'completed', 1, NULL, TRUE, '2024-11-15 11:00:00', 14500.00, 'uploads/bookings/demo-gatepass.png'),
-
-  -- December (peak volume)
-  ('EXP-2024-1201', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-12-01 08:00:00', '2024-11-30 09:00:00', '6-wheeler (Isuzu / Fuso)', 'QC', 'Makati', 'Holiday pallets', '', 'completed', 1, NULL, TRUE, '2024-11-30 11:00:00', 14500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1202', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-12-02 09:00:00', '2024-12-01 09:00:00', '4-wheeler truck', 'Pasay', 'Makati', 'Retail cartons', '', 'completed', 3, NULL, TRUE, '2024-12-01 11:00:00', 9200.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1203', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-12-03 10:00:00', '2024-12-02 08:00:00', 'L300 van', 'Makati', 'Manila', 'Small loads', '', 'completed', 2, NULL, TRUE, '2024-12-02 10:00:00', 4500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1204', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-12-04 11:00:00', '2024-12-03 09:00:00', '6-wheeler (Isuzu / Fuso)', 'Parañaque', 'QC', 'Bulk goods', '', 'completed', 4, NULL, TRUE, '2024-12-03 11:00:00', 14500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1205', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-12-05 12:00:00', '2024-12-04 08:00:00', 'Reefer / specialized', 'QC', 'Pasig', 'Cold chain', '', 'completed', 6, NULL, TRUE, '2024-12-04 10:00:00', 18500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1206', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-12-06 13:30:00', '2024-12-05 09:00:00', '4-wheeler truck', 'Laguna', 'Pasay', 'Cartons', '', 'completed', 5, NULL, TRUE, '2024-12-05 11:00:00', 9200.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1207', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-12-07 08:00:00', '2024-12-06 08:00:00', '6-wheeler (Isuzu / Fuso)', 'Bulacan', 'Makati', 'Pallets', '', 'completed', 7, NULL, TRUE, '2024-12-06 10:00:00', 14500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1208', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-12-08 09:30:00', '2024-12-07 09:00:00', 'L300 van', 'Mandaluyong', 'Manila', 'Transfers', '', 'completed', 2, NULL, TRUE, '2024-12-07 11:00:00', 4500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1209', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-12-09 10:30:00', '2024-12-08 08:00:00', '6-wheeler (Isuzu / Fuso)', 'QC', 'Taguig', 'Bulk goods', '', 'completed', 1, NULL, TRUE, '2024-12-08 10:00:00', 14500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1210', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-12-10 11:00:00', '2024-12-09 09:00:00', '4-wheeler truck', 'Cavite', 'Makati', 'Retail cartons', '', 'completed', 3, NULL, TRUE, '2024-12-09 11:00:00', 9200.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1211', 1, 1, 'acme_corp', 'Acme Trading', 'orders@acme.test', '+63 917 000 0001', '2024-12-11 14:00:00', '2024-12-10 08:00:00', '6-wheeler (Isuzu / Fuso)', 'Manila', 'QC', 'Pallets', '', 'completed', 4, NULL, TRUE, '2024-12-10 10:00:00', 14500.00, 'uploads/bookings/demo-gatepass.png'),
-  ('EXP-2024-1212', 2, 2, 'metro_retail', 'Metro Retail', 'logistics@metro.test', '+63 918 000 0002', '2024-12-12 15:30:00', '2024-12-11 09:00:00', 'Reefer / specialized', 'Pasig', 'Makati', 'Cold cargo', '', 'completed', 6, NULL, TRUE, '2024-12-11 11:00:00', 18500.00, 'uploads/bookings/demo-gatepass.png');
+  ('EXP-2024-0401', 1, 1, '2024-04-03 09:00:00', '2024-04-02 08:00:00', '6-wheeler (Isuzu / Fuso)', 'QC Warehouse', 'Makati', 'Palletized goods', '', 'completed', 1, NULL, TRUE, '2024-04-02 10:00:00', 14500.00, NULL, 'clear'),
+  ('EXP-2024-0402', 2, 2, '2024-04-18 14:00:00', '2024-04-17 09:00:00', 'L300 van', 'Parañaque', 'BGC', 'Cartons', '', 'completed', 2, NULL, TRUE, '2024-04-17 11:00:00', 4500.00, NULL, 'unclear'),
+  ('EXP-2024-0101', 1, 1, '2024-01-12 08:30:00', '2024-01-11 08:00:00', '4-wheeler truck', 'Valenzuela', 'Ortigas', 'Mixed cargo', '', 'completed', 3, NULL, TRUE, '2024-01-11 10:00:00', 9200.00, NULL, 'unclear'),
+  ('EXP-2024-1201', 1, 1, '2024-12-01 08:00:00', '2024-11-30 09:00:00', '6-wheeler (Isuzu / Fuso)', 'QC', 'Makati', 'Holiday pallets', '', 'completed', 1, NULL, TRUE, '2024-11-30 11:00:00', 14500.00, NULL, 'clear'),
+  ('EXP-2024-1202', 2, 2, '2024-12-02 09:00:00', '2024-12-01 09:00:00', '4-wheeler truck', 'Pasay', 'Makati', 'Retail cartons', '', 'completed', 3, NULL, TRUE, '2024-12-01 11:00:00', 9200.00, NULL, 'unclear'),
+  ('EXP-2024-1203', 1, 1, '2024-12-03 10:00:00', '2024-12-02 08:00:00', 'L300 van', 'Makati', 'Manila', 'Small loads', '', 'completed', 2, NULL, TRUE, '2024-12-02 10:00:00', 4500.00, '1234567890123', 'clear'),
+  ('EXP-2024-1204', 2, 2, '2024-12-04 11:00:00', '2024-12-03 09:00:00', '6-wheeler (Isuzu / Fuso)', 'Parañaque', 'QC', 'Bulk goods', '', 'completed', 4, NULL, TRUE, '2024-12-03 11:00:00', 14500.00, NULL, 'unclear'),
+  ('EXP-2024-1212', 2, 2, '2024-12-12 15:30:00', '2024-12-11 09:00:00', 'Reefer / specialized', 'Pasig', 'Makati', 'Cold cargo', '', 'completed', 6, NULL, TRUE, '2024-12-11 11:00:00', 18500.00, NULL, 'unclear');
 
 SET FOREIGN_KEY_CHECKS = 1;
 

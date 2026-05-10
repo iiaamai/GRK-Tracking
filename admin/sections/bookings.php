@@ -15,7 +15,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
     <div class="grid grid--2" style="margin-bottom:0.75rem">
       <div class="form-row" style="margin:0">
         <label for="bookings_q">Search</label>
-        <input id="bookings_q" placeholder="Search booking # / customer / route / status">
+        <input id="bookings_q" placeholder="Search booking # / customer / driver / route / status">
       </div>
       <div class="form-row" style="margin:0">
         <label for="bookings_status">Status</label>
@@ -33,10 +33,11 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
           <tr>
             <th>Booking #</th>
             <th>Customer</th>
+            <th>Driver</th>
             <th>Posting</th>
             <th>Pickup time</th>
             <th>Status</th>
-            <th>Documents</th>
+            <th>Payment / completion</th>
             <th>Route</th>
             <th>Actions</th>
           </tr>
@@ -46,13 +47,17 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
             <tr>
               <?php
                 $bn = (string) ($row['booking_number'] ?? '');
-                $cust = (string) ($row['name'] ?? '');
+                $cust = (string) ($row['customer_name'] ?? '');
+                $driverNm = trim((string) ($row['driver_name'] ?? ''));
                 $route = (string) ($row['pickup'] ?? '') . ' ' . (string) ($row['dropoff'] ?? '');
                 $stVal = (string) ($row['status'] ?? '');
-                $rowText = strtolower(trim($bn . ' ' . $cust . ' ' . $route . ' ' . $stVal));
+                $rowText = strtolower(trim($bn . ' ' . $cust . ' ' . $driverNm . ' ' . $route . ' ' . $stVal));
+                $receipt = (string) ($row['payment_receipt_reference'] ?? '');
+                $dcomp = (string) ($row['driver_completion_status'] ?? 'unclear');
               ?>
               <td data-search="<?= e($rowText) ?>" data-status="<?= e($stVal) ?>"><?= e($bn) ?></td>
               <td><?= e($cust) ?></td>
+              <td><?php if ($driverNm !== ''): ?><?= e($driverNm) ?><?php else: ?><span style="color:var(--muted)">—</span><?php endif; ?></td>
               <td><?= e(format_timestamp($row['posting_date'] ?? '', 'M j, Y')) ?></td>
               <td><?= e(format_timestamp($row['booking_datetime'] ?? '')) ?></td>
               <td>
@@ -67,30 +72,24 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
                   <button type="submit" class="btn btn--ghost" style="padding:0.35rem 0.5rem;font-size:0.8rem">Save</button>
                 </form>
               </td>
-              <td style="max-width:200px;font-size:0.8rem;vertical-align:top">
-                <?php
-                  $gp = (string) ($row['gatepass_image'] ?? '');
-                  $gpUrl = $gp !== '' ? ('../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=gatepass') : '';
-                  $eirUrl = '../handlers/view_booking_doc.php?booking_number=' . urlencode($bn) . '&doc=eir';
-                  $hasEir = false;
-                  if (isset($row['id'])) {
-                    $stmt = db()->prepare('SELECT 1 FROM eir WHERE booking_id = ? LIMIT 1');
-                    $stmt->execute([(int) $row['id']]);
-                    $hasEir = (bool) $stmt->fetchColumn();
-                  }
-                ?>
-                <?php if ($gpUrl !== '' || $hasEir): ?>
-                  <div style="display:flex;flex-direction:column;gap:0.25rem">
-                    <?php if ($gpUrl !== ''): ?>
-                      <a href="<?= e($gpUrl) ?>" target="_blank" rel="noopener noreferrer">View gate pass</a>
-                    <?php endif; ?>
-                    <?php if ($hasEir): ?>
-                      <a href="<?= e($eirUrl) ?>" target="_blank" rel="noopener noreferrer">View EIR</a>
-                    <?php endif; ?>
+              <td style="max-width:220px;font-size:0.8rem;vertical-align:top">
+                <form method="post" action="../handlers/admin_booking_action.php" style="margin:0;display:flex;flex-direction:column;gap:0.35rem">
+                  <?= csrf_field() ?>
+                  <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">
+                  <input type="hidden" name="action" value="update_meta">
+                  <div class="form-row" style="margin:0">
+                    <label style="font-size:0.75rem">Receipt (13 digits)</label>
+                    <input name="payment_receipt_reference" value="<?= e($receipt) ?>" maxlength="13" pattern="\d{13}" inputmode="numeric" autocomplete="off" placeholder="13-digit ref" style="padding:0.35rem;font-size:0.8rem">
                   </div>
-                <?php else: ?>
-                  <span style="color:var(--muted)">—</span>
-                <?php endif; ?>
+                  <div class="form-row" style="margin:0">
+                    <label style="font-size:0.75rem">Driver completion</label>
+                    <select name="driver_completion_status" style="padding:0.35rem;font-size:0.8rem">
+                      <option value="unclear" <?= $dcomp === 'unclear' ? 'selected' : '' ?>>unclear</option>
+                      <option value="clear" <?= $dcomp === 'clear' ? 'selected' : '' ?>>clear</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn--ghost" style="padding:0.35rem 0.5rem;font-size:0.8rem;align-self:flex-start">Save receipt</button>
+                </form>
               </td>
               <td><?= e($row['pickup'] ?? '') ?> → <?= e($row['dropoff'] ?? '') ?></td>
               <td>

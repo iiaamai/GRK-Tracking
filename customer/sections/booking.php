@@ -38,7 +38,11 @@ foreach (array_keys($vehiclePayouts) as $label) {
           <option value="">Select…</option>
           <?php foreach ($vehiclePayouts as $label => $amount): ?>
             <?php $n = (int) ($avail[$label] ?? 0); ?>
-            <option value="<?= e($label) ?>" data-payout="<?= e((string) $amount) ?>"><?= e($label) ?> (<?= $n ?> available)</option>
+            <option
+              value="<?= e($label) ?>"
+              data-payout="<?= e((string) $amount) ?>"
+              <?= $n <= 0 ? 'disabled' : '' ?>
+            ><?= e($label) ?> (<?= $n ?> available)</option>
           <?php endforeach; ?>
         </select>
       </div>

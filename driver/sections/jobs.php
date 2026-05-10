@@ -31,14 +31,12 @@ $blockReason = $hasActive
           $pickup = (string) ($b['pickup'] ?? '');
           $dropoff = (string) ($b['dropoff'] ?? '');
           $route = $pickup . ' → ' . $dropoff;
-          $bizName = (string) ($b['name'] ?? '—');
+          $bizName = (string) ($b['customer_name'] ?? $b['name'] ?? '—');
           $cargo = (string) ($b['cargo_desc'] ?? '—');
           $vehicleType = (string) ($b['vehicle_type'] ?? '—');
           $dtVal = (string) ($b['booking_datetime'] ?? '');
           $payoutVal = $b['payout'] ?? null;
           $payoutStr = format_php_money($payoutVal !== null ? (float) $payoutVal : null);
-          $hasGatepass = (string) ($b['gatepass_image'] ?? '') !== '';
-          $gpLink = '../handlers/view_booking_doc.php?booking_number=' . urlencode((string) ($b['booking_number'] ?? '')) . '&doc=gatepass';
         ?>
         <div class="driver-job-card">
           <div class="driver-job-card__head">
@@ -67,12 +65,6 @@ $blockReason = $hasActive
               <div class="driver-job-card__value"><?= e(format_timestamp($dtVal, 'h:i A')) ?></div>
             </div>
           </div>
-
-          <?php if ($hasGatepass): ?>
-            <div class="driver-job-card__docs">
-              <a href="<?= e($gpLink) ?>" target="_blank" rel="noopener noreferrer">View gate pass</a>
-            </div>
-          <?php endif; ?>
 
           <div class="driver-job-card__cta">
             <form method="post" action="../handlers/driver_accept_job.php" style="margin:0">

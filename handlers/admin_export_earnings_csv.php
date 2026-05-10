@@ -78,7 +78,7 @@ foreach ($rows as $r) {
     fputcsv($out, [
         (string) ($r['booking_number'] ?? ''),
         (string) substr((string) ($r['booking_datetime'] ?? ''), 0, 10),
-        (string) ($r['name'] ?? ''),
+        (string) ($r['customer_name'] ?? ''),
         (string) ((int) ($r['driver_id'] ?? 0)),
         (string) ($r['vehicle_type'] ?? ''),
         (string) ($r['pickup'] ?? ''),

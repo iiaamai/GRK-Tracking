@@ -11,7 +11,7 @@ $mine = repo_customer_bookings((int) $u['id']);
     <p style="color:var(--muted)">No bookings yet. Use <a href="./dashboard.php?section=booking">Booking</a> to create one.</p>
   <?php else: ?>
     <div class="table-wrap">
-      <table>
+      <table id="customer_bookings_table" class="js-paginated-table" data-page-size="5">
         <thead>
           <tr>
             <th>Booking #</th>

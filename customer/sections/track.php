@@ -119,7 +119,7 @@ $trackUrl = './dashboard.php';
   <div class="card">
     <h2>Bookings for username “<?= e($qUser) ?>”</h2>
     <div class="table-wrap">
-      <table>
+      <table id="track_bookings_table" class="js-paginated-table" data-page-size="5">
         <thead>
           <tr>
             <th>Booking #</th>

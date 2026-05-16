@@ -55,7 +55,7 @@ ksort($typeCounts);
       <p style="color:var(--muted)">No vehicles found.</p>
     <?php else: ?>
       <div class="table-wrap">
-        <table>
+        <table id="overview_fleet_types_table" class="js-paginated-table" data-page-size="5">
           <thead>
             <tr>
               <th>Type</th>

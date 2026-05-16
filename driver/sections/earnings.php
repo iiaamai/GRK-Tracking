@@ -20,7 +20,7 @@ $done = array_filter($all, static function ($b) use ($u) {
     <p style="color:var(--muted)">Complete a delivery from My Deliveries to populate earnings.</p>
   <?php else: ?>
     <div class="table-wrap">
-      <table>
+      <table id="driver_earnings_table" class="js-paginated-table" data-page-size="5">
         <thead>
           <tr>
             <th>Booking #</th>

@@ -44,7 +44,7 @@ $rows = repo_customers();
       <input id="customers_q" placeholder="Search username / name / email / mobile">
     </div>
     <div class="table-wrap">
-      <table id="customers_table">
+      <table id="customers_table" class="js-paginated-table" data-page-size="5">
         <thead>
           <tr>
             <th>ID</th>
@@ -116,6 +116,7 @@ $rows = repo_customers();
       var ok = !term || hay.indexOf(term) !== -1;
       tr.style.display = ok ? '' : 'none';
     });
+    table.dispatchEvent(new CustomEvent('paginate-refresh', { bubbles: true }));
   }
   q.addEventListener('input', apply);
 })();

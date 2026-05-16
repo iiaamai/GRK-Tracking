@@ -458,6 +458,36 @@ tr:last-child td {
   }
 }
 
+/* Client-side table pagination (table-pagination.js) */
+table.js-paginated-table tbody tr.is-pager-hidden {
+  display: none !important;
+}
+
+.table-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.table-pager__info {
+  font-size: 0.875rem;
+  color: var(--muted);
+  min-width: 6.5rem;
+  text-align: center;
+}
+
+.table-pager .btn:disabled,
+.table-pager .btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 GRKCSS_GLOBAL;
 }
 

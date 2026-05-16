@@ -58,7 +58,7 @@ $vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', 'Reefer / 
     <p style="color:var(--muted)">No drivers.</p>
   <?php else: ?>
     <div class="table-wrap">
-      <table>
+      <table id="drivers_table" class="js-paginated-table" data-page-size="5">
         <thead>
           <tr>
             <th>ID</th>

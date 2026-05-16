@@ -28,7 +28,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
       </div>
     </div>
     <div class="table-wrap">
-      <table id="bookings_table">
+      <table id="bookings_table" class="js-paginated-table" data-page-size="5">
         <thead>
           <tr>
             <th>Booking #</th>
@@ -168,6 +168,7 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
         if (status) ok = ok && rowStatus === status;
         tr.style.display = ok ? '' : 'none';
       });
+      table.dispatchEvent(new CustomEvent('paginate-refresh', { bubbles: true }));
     }
     q.addEventListener('input', apply);
     st.addEventListener('change', apply);

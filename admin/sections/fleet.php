@@ -75,7 +75,7 @@ $st = ['available', 'in_use', 'maintenance'];
       </div>
     </div>
     <div class="table-wrap">
-      <table id="fleet_table">
+      <table id="fleet_table" class="js-paginated-table" data-page-size="5">
         <thead>
           <tr>
             <th>ID</th>
@@ -172,6 +172,7 @@ $st = ['available', 'in_use', 'maintenance'];
       if (type) ok = ok && rowType === type;
       tr.style.display = ok ? '' : 'none';
     });
+    table.dispatchEvent(new CustomEvent('paginate-refresh', { bubbles: true }));
   }
   q.addEventListener('input', apply);
   st.addEventListener('change', apply);

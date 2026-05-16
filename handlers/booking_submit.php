@@ -68,7 +68,17 @@ $row = [
     'cancel_message' => null,
 ];
 
-repo_add_booking($row);
+try {
+    repo_add_booking($row);
+} catch (Throwable $e) {
+    error_log('booking_submit: ' . $e->getMessage());
+    flash_set(
+        'error',
+        'Could not save your booking. The database may need an update—run data/enhancements/migrate_bookings_columns.sql or schemas.sql on the server, then try again.'
+    );
+    redirect(BASE_URL . '/customer/dashboard.php?section=booking');
+}
+
 flash_set(
     'success',
     'Booking created: ' . $row['booking_number'] . '. Drivers can accept the job right away.'

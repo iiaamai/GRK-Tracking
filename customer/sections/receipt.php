@@ -44,6 +44,12 @@ $payoutAmt = isset($b['payout']) && $b['payout'] !== null ? (float) $b['payout']
       <div><dt>Posted</dt><dd><?= e(format_timestamp($b['posting_date'] ?? '', 'M j, Y')) ?></dd></div>
       <div><dt>Pickup date &amp; time</dt><dd><?= e(format_timestamp($b['booking_datetime'] ?? '')) ?></dd></div>
       <div><dt>Status</dt><dd><?= e((string) ($b['status'] ?? '')) ?></dd></div>
+      <?php if (($b['status'] ?? '') === 'cancelled' && trim((string) ($b['cancel_message'] ?? '')) !== ''): ?>
+        <div class="booking-receipt__dl-full">
+          <dt>Cancellation reason</dt>
+          <dd><?= e((string) $b['cancel_message']) ?></dd>
+        </div>
+      <?php endif; ?>
     </dl>
   </div>
 

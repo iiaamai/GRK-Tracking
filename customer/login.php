@@ -47,10 +47,6 @@ $ok = flash_get('success');
           <button type="submit" class="btn btn--primary">Sign in</button>
         </div>
       </form>
-      <div class="demo-hint">
-        Demo: <code>acme_corp</code> / <code>demo123</code> or <code>metro_retail</code> / <code>demo123</code>
-      </div>
-
       <div class="login-divider" role="presentation"></div>
 
       <h2 class="login-register-title">Create an account</h2>

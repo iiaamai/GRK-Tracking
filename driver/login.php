@@ -48,9 +48,6 @@ $vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', 'Reefer / 
           <button type="submit" class="btn btn--primary">Sign in</button>
         </div>
       </form>
-      <div class="demo-hint">
-        Demo: <code>driver_juan</code> / <code>demo123</code> or <code>driver_maria</code> / <code>demo123</code>
-      </div>
 
       <div class="login-divider" role="presentation"></div>
 

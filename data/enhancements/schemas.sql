@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   `payout` DECIMAL(12, 2) NULL,
   `payment_receipt_reference` VARCHAR(13) NULL,
   `driver_completion_status` ENUM('clear','unclear') NOT NULL DEFAULT 'unclear',
+  `cancel_message` TEXT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_bookings_number` (`booking_number`),
   KEY `idx_bookings_customer` (`customer_id`),
@@ -198,7 +199,8 @@ ALTER TABLE `bookings`
   ADD COLUMN IF NOT EXISTS `is_locked` BOOLEAN NOT NULL DEFAULT FALSE AFTER `vehicle_id`,
   ADD COLUMN IF NOT EXISTS `accepted_at` TIMESTAMP NULL DEFAULT NULL AFTER `is_locked`,
   ADD COLUMN IF NOT EXISTS `payment_receipt_reference` VARCHAR(13) NULL AFTER `payout`,
-  ADD COLUMN IF NOT EXISTS `driver_completion_status` ENUM('clear','unclear') NOT NULL DEFAULT 'unclear' AFTER `payment_receipt_reference`;
+  ADD COLUMN IF NOT EXISTS `driver_completion_status` ENUM('clear','unclear') NOT NULL DEFAULT 'unclear' AFTER `payment_receipt_reference`,
+  ADD COLUMN IF NOT EXISTS `cancel_message` TEXT NULL AFTER `driver_completion_status`;
 
 UPDATE `bookings` SET `user_id` = `customer_id` WHERE `user_id` IS NULL;
 

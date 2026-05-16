@@ -115,6 +115,7 @@ CREATE TABLE `bookings` (
   `payout` DECIMAL(12, 2) NULL,
   `payment_receipt_reference` VARCHAR(13) NULL,
   `driver_completion_status` ENUM('clear','unclear') NOT NULL DEFAULT 'unclear',
+  `cancel_message` TEXT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_bookings_number` (`booking_number`),
   KEY `idx_bookings_customer` (`customer_id`),
@@ -205,7 +206,7 @@ INSERT INTO `bookings` (
   `booking_number`, `customer_id`, `user_id`,
   `booking_datetime`, `posting_date`, `vehicle_type`, `pickup`, `dropoff`,
   `cargo_desc`, `additional_requirements`, `status`, `driver_id`, `vehicle_id`, `is_locked`, `accepted_at`, `payout`,
-  `payment_receipt_reference`, `driver_completion_status`
+  `payment_receipt_reference`, `driver_completion_status`, `cancel_message`
 ) VALUES
   (
     'EXP-2026-0001', 1, 1,
@@ -213,7 +214,7 @@ INSERT INTO `bookings` (
     'Quezon City Warehouse', 'Makati CBD',
     'Palletized goods — 40 pallets', 'Liftgate required; morning slot only.',
     'accepted', 1, 2, TRUE, '2026-03-26 08:00:00', 5200.00,
-    NULL, 'unclear'
+    NULL, 'unclear', NULL
   ),
   (
     'EXP-2026-0002', 2, 2,
@@ -221,7 +222,7 @@ INSERT INTO `bookings` (
     'Parañaque Hub', 'BGC',
     'Retail cartons — 200 boxes', '',
     'pending', NULL, NULL, FALSE, NULL, NULL,
-    NULL, 'unclear'
+    NULL, 'unclear', NULL
   );
 
 INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES

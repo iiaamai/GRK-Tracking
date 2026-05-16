@@ -53,6 +53,7 @@ function mock_bookings_seed(): array
             'payout' => 5200.0,
             'payment_receipt_reference' => null,
             'driver_completion_status' => 'unclear',
+            'cancel_message' => null,
         ],
         [
             'booking_number' => 'EXP-2026-0002',
@@ -73,6 +74,7 @@ function mock_bookings_seed(): array
             'payout' => null,
             'payment_receipt_reference' => null,
             'driver_completion_status' => 'unclear',
+            'cancel_message' => null,
         ],
     ];
 }

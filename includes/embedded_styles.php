@@ -820,6 +820,116 @@ GRKCSS_ADM_EARNINGS_REPORTS,
   font-size: 0.85rem;
 }
 
+.cancel-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.cancel-modal[hidden] {
+  display: none !important;
+}
+
+.cancel-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.cancel-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--neutral);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 1.35rem 1.5rem;
+}
+
+.cancel-modal__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+  color: var(--shade);
+}
+
+.cancel-modal__lead,
+.cancel-modal__ref {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.cancel-modal__reasons {
+  border: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cancel-modal__reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--shade);
+  cursor: pointer;
+}
+
+.cancel-modal__reason input {
+  margin-top: 0.2rem;
+  accent-color: var(--primary);
+}
+
+.cancel-modal__other {
+  margin-bottom: 1rem;
+}
+
+.cancel-modal__other textarea {
+  width: 100%;
+  min-height: 4.5rem;
+  resize: vertical;
+}
+
+.cancel-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.cancel-modal__actions .btn--primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.cancel-modal__actions .btn--primary:hover {
+  background: var(--primary-deep);
+  border-color: var(--primary-deep);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 GRKCSS_ADM_BOOKINGS,
         'drivers' => <<<'GRKCSS_ADM_DRIVERS'
 /* admin/sections/drivers.php */

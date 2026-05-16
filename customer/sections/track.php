@@ -66,6 +66,9 @@ $trackUrl = './dashboard.php';
           <div><dt>Mobile</dt><dd><?= e($b['mobile'] ?? '') ?></dd></div>
           <div><dt>Booking date & time</dt><dd><?= e(format_timestamp($b['booking_datetime'] ?? '')) ?></dd></div>
           <div><dt>Posted</dt><dd><?= e(format_timestamp($b['posting_date'] ?? '', 'M j, Y')) ?></dd></div>
+          <?php if (($b['status'] ?? '') === 'cancelled' && trim((string) ($b['cancel_message'] ?? '')) !== ''): ?>
+            <div class="track-dl__full"><dt>Cancellation reason</dt><dd><?= e((string) $b['cancel_message']) ?></dd></div>
+          <?php endif; ?>
         </dl>
       </section>
 

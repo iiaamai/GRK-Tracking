@@ -34,7 +34,12 @@ $mine = repo_customer_bookings((int) $u['id']);
               <td><?= e(format_timestamp($b['booking_datetime'] ?? '')) ?></td>
               <td><?= e(format_php_money(isset($b['payout']) && $b['payout'] !== null ? (float) $b['payout'] : null)) ?></td>
               <td><?php $pref = trim((string) ($b['payment_receipt_reference'] ?? '')); ?><?php if ($pref !== ''): ?><?= e($pref) ?><?php else: ?><span style="color:var(--muted)">—</span><?php endif; ?></td>
-              <td><span class="badge <?= e($cls) ?>"><?= e($b['status'] ?? '') ?></span></td>
+              <td>
+                <span class="badge <?= e($cls) ?>"><?= e($b['status'] ?? '') ?></span>
+                <?php if (($b['status'] ?? '') === 'cancelled' && trim((string) ($b['cancel_message'] ?? '')) !== ''): ?>
+                  <div style="margin-top:0.25rem;font-size:0.75rem;color:var(--muted);max-width:12rem;white-space:normal"><?= e((string) $b['cancel_message']) ?></div>
+                <?php endif; ?>
+              </td>
               <td><?= e($b['vehicle_type'] ?? '') ?></td>
               <td style="white-space:normal;max-width:14rem"><?= e($b['pickup'] ?? '') ?> → <?= e($b['dropoff'] ?? '') ?></td>
               <td class="booking-receipt-actions" style="white-space:nowrap"><a href="./dashboard.php?section=receipt&amp;booking_number=<?= rawurlencode((string) ($b['booking_number'] ?? '')) ?>" class="btn btn--ghost" style="padding:0.35rem 0.55rem;font-size:0.8rem">View / print</a></td>

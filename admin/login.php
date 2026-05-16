@@ -42,9 +42,6 @@ $err = flash_get('error');
           <button type="submit" class="btn btn--primary">Sign in</button>
         </div>
       </form>
-      <div class="demo-hint">
-        Demo: <code>admin</code> / <code>admin123</code>
-      </div>
       <p class="login-meta"><a href="./index.php">Admin home</a> · <a href="../index.php">Portals</a></p>
     </div>
   </div>

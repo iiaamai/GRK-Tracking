@@ -51,7 +51,35 @@ if ($act === 'update_meta') {
     redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
 }
 
-$allowed = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
+if ($act === 'cancel') {
+    $booking = repo_find_booking_by_number($bn);
+    if ($booking === null) {
+        flash_set('error', 'Booking not found.');
+        redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
+    }
+    $reasonKey = trim((string) ($_POST['cancel_reason'] ?? ''));
+    $otherText = trim((string) ($_POST['cancel_other'] ?? ''));
+    $message = booking_cancel_message_from_post($reasonKey, $otherText);
+    if ($message === null) {
+        flash_set('error', 'Please select a cancellation reason. If you choose Other, enter details.');
+        redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
+    }
+    repo_update_booking($bn, static function (array $b) use ($message) {
+        $b['status'] = 'cancelled';
+        $b['cancel_message'] = $message;
+
+        return $b;
+    });
+    flash_set('success', 'Booking cancelled.');
+    redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
+}
+
+if ($act === 'cancelled') {
+    flash_set('error', 'Use the cancellation dialog to cancel a booking.');
+    redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
+}
+
+$allowed = ['pending', 'accepted', 'in_transit', 'completed'];
 if (!in_array($act, $allowed, true)) {
     flash_set('error', 'Invalid status.');
     redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
@@ -59,6 +87,7 @@ if (!in_array($act, $allowed, true)) {
 
 repo_update_booking($bn, static function (array $b) use ($act) {
     $b['status'] = $act;
+    $b['cancel_message'] = null;
 
     return $b;
 });

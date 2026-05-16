@@ -65,6 +65,7 @@ $row = [
     'payout' => $payout,
     'payment_receipt_reference' => null,
     'driver_completion_status' => 'unclear',
+    'cancel_message' => null,
 ];
 
 repo_add_booking($row);

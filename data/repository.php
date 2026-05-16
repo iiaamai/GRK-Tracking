@@ -29,6 +29,8 @@ function repo_map_booking_row(array $row): array
     $pr = $row['payment_receipt_reference'] ?? null;
     $row['payment_receipt_reference'] = $pr !== null && $pr !== '' ? (string) $pr : null;
     $row['driver_completion_status'] = (string) ($row['driver_completion_status'] ?? 'unclear');
+    $cm = $row['cancel_message'] ?? null;
+    $row['cancel_message'] = $cm !== null && trim((string) $cm) !== '' ? trim((string) $cm) : null;
     if (isset($row['customer_name'])) {
         $row['customer_name'] = (string) $row['customer_name'];
     }
@@ -125,9 +127,9 @@ INSERT INTO bookings (
   booking_number, customer_id, user_id,
   booking_datetime, posting_date, vehicle_type, pickup, dropoff,
   cargo_desc, additional_requirements, status, driver_id, vehicle_id, is_locked, accepted_at, payout,
-  payment_receipt_reference, driver_completion_status
+  payment_receipt_reference, driver_completion_status, cancel_message
 ) VALUES (
-  ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+  ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
 ) ON DUPLICATE KEY UPDATE
   customer_id = VALUES(customer_id),
   user_id = VALUES(user_id),
@@ -145,7 +147,8 @@ INSERT INTO bookings (
   accepted_at = VALUES(accepted_at),
   payout = VALUES(payout),
   payment_receipt_reference = VALUES(payment_receipt_reference),
-  driver_completion_status = VALUES(driver_completion_status)
+  driver_completion_status = VALUES(driver_completion_status),
+  cancel_message = VALUES(cancel_message)
 SQL;
     $stmt = $pdo->prepare($sql);
     $userId = $b['user_id'] ?? null;
@@ -160,6 +163,8 @@ SQL;
     if (!in_array($driverCompletion, ['clear', 'unclear'], true)) {
         $driverCompletion = 'unclear';
     }
+    $cancelMsg = $b['cancel_message'] ?? null;
+    $cancelMsg = $cancelMsg !== null && trim((string) $cancelMsg) !== '' ? trim((string) $cancelMsg) : null;
     $stmt->execute([
         $b['booking_number'] ?? '',
         (int) ($b['customer_id'] ?? 0),
@@ -179,6 +184,7 @@ SQL;
         $payout !== null ? (string) $payout : null,
         $payRef,
         $driverCompletion,
+        $cancelMsg,
     ]);
 }
 

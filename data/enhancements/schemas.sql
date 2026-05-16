@@ -1,6 +1,8 @@
 -- System Enhancements Compliance (Schemas / Migrations Only)
 -- Selects the app database (must match config/config.php DB_NAME).
 -- This file contains ONLY schema creation / alteration (no demo inserts).
+-- Run order: schemas.sql first, then data/enhancements/insertions.sql for sample data.
+-- Legacy/production DBs: re-run this file; booking column ALTERs use IF NOT EXISTS (safe to repeat).
 
 CREATE DATABASE IF NOT EXISTS `express_logistics`
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

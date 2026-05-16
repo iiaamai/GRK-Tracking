@@ -74,7 +74,7 @@ try {
     error_log('booking_submit: ' . $e->getMessage());
     flash_set(
         'error',
-        'Could not save your booking. The database may need an update—run data/enhancements/migrate_bookings_columns.sql or schemas.sql on the server, then try again.'
+        'Could not save your booking. The database may need an update—run data/enhancements/schemas.sql on the server, then try again.'
     );
     redirect(BASE_URL . '/customer/dashboard.php?section=booking');
 }

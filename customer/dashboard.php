@@ -6,7 +6,7 @@ require_once dirname(__DIR__) . '/includes/init.php';
 auth_require_role(AUTH_ROLE_CUSTOMER);
 
 $section = $_GET['section'] ?? 'overview';
-$allowed = ['overview', 'booking', 'track', 'bookings', 'profile'];
+$allowed = ['overview', 'booking', 'track', 'bookings', 'profile', 'receipt'];
 if (!in_array($section, $allowed, true)) {
     $section = 'overview';
 }
@@ -17,6 +17,7 @@ $titles = [
     'track' => 'Track Shipment',
     'bookings' => 'My Bookings',
     'profile' => 'Profile',
+    'receipt' => 'Booking receipt',
 ];
 $pageTitle = $titles[$section];
 

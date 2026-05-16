@@ -44,6 +44,8 @@ $trackUrl = './dashboard.php';
   $cls = 'badge--' . preg_replace('/[^a-z_]/', '', (string) ($b['status'] ?? 'pending'));
   $driverId = (int) ($b['driver_id'] ?? 0);
   $driver = $driverId > 0 ? repo_driver_by_id($driverId) : null;
+  $payoutDisplay = isset($b['payout']) && $b['payout'] !== null ? (float) $b['payout'] : null;
+  $prefDisplay = trim((string) ($b['payment_receipt_reference'] ?? ''));
   ?>
   <div class="card track-shipment-panel">
     <header class="track-shipment-panel__head">
@@ -72,6 +74,14 @@ $trackUrl = './dashboard.php';
         <dl class="track-dl">
           <div><dt>Pickup</dt><dd><?= e($b['pickup'] ?? '—') ?></dd></div>
           <div><dt>Drop-off</dt><dd><?= e($b['dropoff'] ?? '—') ?></dd></div>
+        </dl>
+      </section>
+
+      <section class="track-shipment-panel__block" aria-labelledby="track-block-payment">
+        <h3 id="track-block-payment">Pricing &amp; payment</h3>
+        <dl class="track-dl">
+          <div><dt>Quoted price</dt><dd><?= e(format_php_money($payoutDisplay)) ?></dd></div>
+          <div><dt>Payment receipt ref.</dt><dd><?php if ($prefDisplay !== ''): ?><?= e($prefDisplay) ?><?php else: ?><span style="color:var(--muted)">Not recorded yet</span><?php endif; ?></dd></div>
         </dl>
       </section>
 
@@ -112,6 +122,7 @@ $trackUrl = './dashboard.php';
             <th>Booking #</th>
             <th>Date/Time</th>
             <th>Status</th>
+            <th>Price</th>
             <th>Route</th>
           </tr>
         </thead>
@@ -122,6 +133,7 @@ $trackUrl = './dashboard.php';
               <td><?= e($b['booking_number'] ?? '') ?></td>
               <td><?= e(format_timestamp($b['booking_datetime'] ?? '')) ?></td>
               <td><span class="badge <?= e($cls) ?>"><?= e($b['status'] ?? '') ?></span></td>
+              <td><?= e(format_php_money(isset($b['payout']) && $b['payout'] !== null ? (float) $b['payout'] : null)) ?></td>
               <td><?= e($b['pickup'] ?? '') ?> → <?= e($b['dropoff'] ?? '') ?></td>
             </tr>
           <?php endforeach; ?>

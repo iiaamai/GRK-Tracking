@@ -78,8 +78,8 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
                   <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">
                   <input type="hidden" name="action" value="update_meta">
                   <div class="form-row" style="margin:0">
-                    <label style="font-size:0.75rem">Receipt (13 digits)</label>
-                    <input name="payment_receipt_reference" value="<?= e($receipt) ?>" maxlength="13" pattern="\d{13}" inputmode="numeric" autocomplete="off" placeholder="13-digit ref" style="padding:0.35rem;font-size:0.8rem">
+                    <label style="font-size:0.75rem">Receipt ref. (13 digits, required)</label>
+                    <input name="payment_receipt_reference" value="<?= e($receipt) ?>" maxlength="13" pattern="\d{13}" inputmode="numeric" autocomplete="off" placeholder="13-digit ref" required style="padding:0.35rem;font-size:0.8rem">
                   </div>
                   <div class="form-row" style="margin:0">
                     <label style="font-size:0.75rem">Driver completion</label>

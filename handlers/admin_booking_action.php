@@ -28,8 +28,8 @@ if ($act === 'delete') {
 
 if ($act === 'update_meta') {
     $ref = trim((string) ($_POST['payment_receipt_reference'] ?? ''));
-    if (!booking_payment_receipt_reference_valid($ref)) {
-        flash_set('error', 'Payment receipt must be empty or exactly 13 digits.');
+    if (!booking_payment_receipt_reference_required_valid($ref)) {
+        flash_set('error', 'Payment receipt reference is required and must be exactly 13 digits.');
         redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
     }
     $dc = trim((string) ($_POST['driver_completion_status'] ?? 'unclear'));
@@ -37,7 +37,7 @@ if ($act === 'update_meta') {
         $dc = 'unclear';
     }
     repo_update_booking($bn, static function (array $b) use ($ref, $dc) {
-        $b['payment_receipt_reference'] = $ref === '' ? null : $ref;
+        $b['payment_receipt_reference'] = $ref;
         $b['driver_completion_status'] = $dc;
 
         return $b;

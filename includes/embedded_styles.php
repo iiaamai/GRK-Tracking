@@ -876,7 +876,113 @@ GRKCSS_CUS_BOOKING,
   white-space: nowrap;
 }
 
+.table-wrap td:nth-child(8),
+.booking-receipt-actions {
+  white-space: normal;
+}
+
 GRKCSS_CUS_BOOKINGS,
+        'receipt' => <<<'GRKCSS_CUS_RECEIPT'
+/* customer/sections/receipt.php */
+.booking-receipt__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.booking-receipt__block {
+  margin-bottom: 1.15rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.booking-receipt__block:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.booking-receipt__dl {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.booking-receipt__dl > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 32%) 1fr;
+  gap: 0.35rem 0.85rem;
+  font-size: 0.92rem;
+  align-items: start;
+}
+
+.booking-receipt__dl dt {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.booking-receipt__dl dd {
+  margin: 0;
+  color: var(--shade);
+  word-break: break-word;
+}
+
+.booking-receipt__amt {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.booking-receipt__dl-full {
+  display: block !important;
+}
+
+.booking-receipt__dl-full dt {
+  margin-bottom: 0.25rem;
+}
+
+.booking-receipt__dl-full dd {
+  white-space: pre-wrap;
+}
+
+@media print {
+  .sidebar,
+  .sidebar__brand,
+  .sidebar__foot,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  .app-shell {
+    display: block !important;
+    max-width: none !important;
+  }
+  .main {
+    margin: 0 !important;
+    padding: 0.5rem !important;
+  }
+  .page-head {
+    display: none !important;
+  }
+  .flash {
+    display: none !important;
+  }
+  .booking-receipt,
+  .card.booking-receipt {
+    border: none !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    padding: 0 !important;
+  }
+}
+
+GRKCSS_CUS_RECEIPT,
         'profile' => <<<'GRKCSS_CUS_PROFILE'
 /* customer/sections/profile.php */
 .card code {

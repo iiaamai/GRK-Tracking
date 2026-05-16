@@ -36,6 +36,10 @@ function repo_map_booking_row(array $row): array
         $row['driver_name'] = (string) $row['driver_name'];
     }
     $row['name'] = (string) ($row['customer_name'] ?? $row['name'] ?? '');
+    $row['username'] = (string) ($row['customer_username'] ?? $row['username'] ?? '');
+    $row['email'] = (string) ($row['customer_email'] ?? $row['email'] ?? '');
+    $row['mobile'] = (string) ($row['customer_mobile'] ?? $row['mobile'] ?? '');
+    unset($row['customer_username'], $row['customer_email'], $row['customer_mobile']);
 
     return $row;
 }
@@ -70,7 +74,7 @@ function repo_bookings(): array
 {
     $pdo = db();
     $stmt = $pdo->query(
-        'SELECT b.*, c.name AS customer_name, d.name AS driver_name
+        'SELECT b.*, c.name AS customer_name, c.username AS customer_username, c.email AS customer_email, c.mobile AS customer_mobile, d.name AS driver_name
          FROM bookings b
          INNER JOIN customers c ON c.id = b.customer_id
          LEFT JOIN drivers d ON d.id = b.driver_id
@@ -114,7 +118,7 @@ function repo_save_bookings(array $bookings): void
 
 function repo_upsert_booking_row(array $b): void
 {
-    unset($b['customer_name'], $b['driver_name']);
+    unset($b['customer_name'], $b['driver_name'], $b['customer_username'], $b['customer_email'], $b['customer_mobile']);
     $pdo = db();
     $sql = <<<'SQL'
 INSERT INTO bookings (
@@ -279,7 +283,7 @@ function repo_find_booking_by_number(string $num): ?array
 {
     $pdo = db();
     $stmt = $pdo->prepare(
-        'SELECT b.*, c.name AS customer_name, d.name AS driver_name
+        'SELECT b.*, c.name AS customer_name, c.username AS customer_username, c.email AS customer_email, c.mobile AS customer_mobile, d.name AS driver_name
          FROM bookings b
          INNER JOIN customers c ON c.id = b.customer_id
          LEFT JOIN drivers d ON d.id = b.driver_id
@@ -299,7 +303,7 @@ function repo_find_bookings_by_username(string $user): array
     $u = strtolower(trim($user));
     $pdo = db();
     $stmt = $pdo->prepare(
-        'SELECT b.*, c.name AS customer_name FROM bookings b
+        'SELECT b.*, c.name AS customer_name, c.username AS customer_username, c.email AS customer_email, c.mobile AS customer_mobile FROM bookings b
          INNER JOIN customers c ON c.id = b.customer_id
          WHERE LOWER(c.username) = ?
          ORDER BY b.booking_datetime DESC'
@@ -317,7 +321,7 @@ function repo_customer_bookings(int $customerId): array
 {
     $pdo = db();
     $stmt = $pdo->prepare(
-        'SELECT b.*, c.name AS customer_name FROM bookings b
+        'SELECT b.*, c.name AS customer_name, c.username AS customer_username, c.email AS customer_email, c.mobile AS customer_mobile FROM bookings b
          INNER JOIN customers c ON c.id = b.customer_id
          WHERE b.customer_id = ?
          ORDER BY b.booking_datetime DESC'
@@ -350,7 +354,7 @@ function repo_driver_jobs_available(string $driverVehicleType): array
     $driverNorm = repo_normalize_vehicle_type_to_fleet_type($driverVehicleType);
     $pdo = db();
     $stmt = $pdo->query(
-        "SELECT b.*, c.name AS customer_name FROM bookings b
+        "SELECT b.*, c.name AS customer_name, c.username AS customer_username, c.email AS customer_email, c.mobile AS customer_mobile FROM bookings b
          INNER JOIN customers c ON c.id = b.customer_id
          WHERE b.status = 'pending'
            AND (b.is_locked = 0 OR b.is_locked IS NULL)
@@ -372,7 +376,7 @@ function repo_driver_deliveries(int $driverId): array
 {
     $pdo = db();
     $stmt = $pdo->prepare(
-        "SELECT b.*, c.name AS customer_name FROM bookings b
+        "SELECT b.*, c.name AS customer_name, c.username AS customer_username, c.email AS customer_email, c.mobile AS customer_mobile FROM bookings b
          INNER JOIN customers c ON c.id = b.customer_id
          WHERE b.driver_id = ? AND b.status IN ('accepted','in_transit')
          ORDER BY b.booking_datetime ASC"

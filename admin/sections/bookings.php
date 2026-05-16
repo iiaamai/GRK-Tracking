@@ -73,23 +73,24 @@ $statuses = ['pending', 'accepted', 'in_transit', 'completed', 'cancelled'];
                 </form>
               </td>
               <td style="max-width:220px;font-size:0.8rem;vertical-align:top">
-                <form method="post" action="../handlers/admin_booking_action.php" style="margin:0;display:flex;flex-direction:column;gap:0.35rem">
-                  <?= csrf_field() ?>
-                  <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">
-                  <input type="hidden" name="action" value="update_meta">
-                  <div class="form-row" style="margin:0">
-                    <label style="font-size:0.75rem">Receipt ref. (13 digits, required)</label>
-                    <input name="payment_receipt_reference" value="<?= e($receipt) ?>" maxlength="13" pattern="\d{13}" inputmode="numeric" autocomplete="off" placeholder="13-digit ref" required style="padding:0.35rem;font-size:0.8rem">
-                  </div>
-                  <div class="form-row" style="margin:0">
-                    <label style="font-size:0.75rem">Driver completion</label>
-                    <select name="driver_completion_status" style="padding:0.35rem;font-size:0.8rem">
-                      <option value="unclear" <?= $dcomp === 'unclear' ? 'selected' : '' ?>>unclear</option>
-                      <option value="clear" <?= $dcomp === 'clear' ? 'selected' : '' ?>>clear</option>
-                    </select>
-                  </div>
-                  <button type="submit" class="btn btn--ghost" style="padding:0.35rem 0.5rem;font-size:0.8rem;align-self:flex-start">Save receipt</button>
-                </form>
+                <?php if ($stVal === 'completed'): ?>
+                  <form method="post" action="../handlers/admin_booking_action.php" style="margin:0;display:flex;flex-direction:column;gap:0.35rem">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="booking_number" value="<?= e($row['booking_number'] ?? '') ?>">
+                    <input type="hidden" name="action" value="update_meta">
+                    <p style="margin:0;font-size:0.75rem;color:var(--muted)">Driver completion: <strong><?= e($dcomp) ?></strong> (set to clear when receipt is saved)</p>
+                    <div class="form-row" style="margin:0">
+                      <label style="font-size:0.75rem">Receipt ref. (13 digits, required)</label>
+                      <input name="payment_receipt_reference" value="<?= e($receipt) ?>" maxlength="13" pattern="\d{13}" inputmode="numeric" autocomplete="off" placeholder="13-digit ref" required style="padding:0.35rem;font-size:0.8rem">
+                    </div>
+                    <button type="submit" class="btn btn--ghost" style="padding:0.35rem 0.5rem;font-size:0.8rem;align-self:flex-start">Save receipt</button>
+                  </form>
+                <?php else: ?>
+                  <p style="margin:0 0 0.35rem;color:var(--muted);font-size:0.75rem">Record payment when status is <strong>completed</strong>.</p>
+                  <?php if ($receipt !== '' || $dcomp !== 'unclear'): ?>
+                    <p style="margin:0;font-size:0.75rem">Ref: <?= $receipt !== '' ? e($receipt) : '<span style="color:var(--muted)">—</span>' ?> · Completion: <?= e($dcomp) ?></p>
+                  <?php endif; ?>
+                <?php endif; ?>
               </td>
               <td><?= e($row['pickup'] ?? '') ?> → <?= e($row['dropoff'] ?? '') ?></td>
               <td>

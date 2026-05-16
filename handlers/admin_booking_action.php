@@ -27,22 +27,27 @@ if ($act === 'delete') {
 }
 
 if ($act === 'update_meta') {
+    $booking = repo_find_booking_by_number($bn);
+    if ($booking === null) {
+        flash_set('error', 'Booking not found.');
+        redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
+    }
+    if (($booking['status'] ?? '') !== 'completed') {
+        flash_set('error', 'Payment receipt can only be recorded for completed bookings.');
+        redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
+    }
     $ref = trim((string) ($_POST['payment_receipt_reference'] ?? ''));
     if (!booking_payment_receipt_reference_required_valid($ref)) {
         flash_set('error', 'Payment receipt reference is required and must be exactly 13 digits.');
         redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
     }
-    $dc = trim((string) ($_POST['driver_completion_status'] ?? 'unclear'));
-    if (!in_array($dc, ['clear', 'unclear'], true)) {
-        $dc = 'unclear';
-    }
-    repo_update_booking($bn, static function (array $b) use ($ref, $dc) {
+    repo_update_booking($bn, static function (array $b) use ($ref) {
         $b['payment_receipt_reference'] = $ref;
-        $b['driver_completion_status'] = $dc;
+        $b['driver_completion_status'] = 'clear';
 
         return $b;
     });
-    flash_set('success', 'Payment receipt and driver completion saved.');
+    flash_set('success', 'Payment receipt saved; driver completion marked clear.');
     redirect(BASE_URL . '/admin/dashboard.php?section=bookings');
 }
 

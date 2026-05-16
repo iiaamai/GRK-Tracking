@@ -42,6 +42,7 @@ $ok = flash_get('success');
           <label for="login_password">Password</label>
           <input id="login_password" name="password" type="password" required autocomplete="current-password" maxlength="120">
         </div>
+        <p class="login-forgot-link"><a href="./forgot_password.php">Forgot password?</a></p>
         <div class="actions">
           <button type="submit" class="btn btn--primary">Sign in</button>
         </div>

@@ -43,6 +43,7 @@ $vtypes = ['6-wheeler (Isuzu / Fuso)', '4-wheeler truck', 'L300 van', 'Reefer / 
           <label for="login_password">Password</label>
           <input id="login_password" name="password" type="password" required autocomplete="current-password" maxlength="120">
         </div>
+        <p class="login-forgot-link"><a href="./forgot_password.php">Forgot password?</a></p>
         <div class="actions">
           <button type="submit" class="btn btn--primary">Sign in</button>
         </div>

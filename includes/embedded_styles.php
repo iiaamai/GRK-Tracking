@@ -725,6 +725,35 @@ function embedded_styles_login(): string
   font-size: 0.85em;
 }
 
+.login-forgot-link {
+  margin: -0.35rem 0 0.75rem;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.login-forgot-link a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.login-forgot-link a:hover {
+  color: #e0650f;
+  text-decoration: underline;
+}
+
+.reset-sent-demo {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: rgba(247, 114, 22, 0.08);
+  border: 1px dashed rgba(247, 114, 22, 0.35);
+}
+
+.reset-sent-demo a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
 .login-divider {
   height: 1px;
   background: var(--border);

@@ -10,3 +10,4 @@ require_once APP_ROOT . '/includes/booking_receipt.php';
 require_once APP_ROOT . '/data/repository.php';
 require_once APP_ROOT . '/includes/csrf.php';
 require_once APP_ROOT . '/includes/auth.php';
+require_once APP_ROOT . '/includes/password_reset.php';

@@ -703,6 +703,58 @@ function repo_insert_customer(string $username, string $email, string $password,
     }
 }
 
+function repo_find_customer_by_login(string $identifier): ?array
+{
+    $id = strtolower(trim($identifier));
+    if ($id === '') {
+        return null;
+    }
+    $stmt = db()->prepare(
+        'SELECT * FROM customers WHERE LOWER(username) = ? OR LOWER(email) = ? LIMIT 1'
+    );
+    $stmt->execute([$id, $id]);
+    $row = $stmt->fetch();
+
+    return $row ? repo_map_customer_row($row) : null;
+}
+
+function repo_find_driver_by_login(string $identifier): ?array
+{
+    $id = strtolower(trim($identifier));
+    if ($id === '') {
+        return null;
+    }
+    $stmt = db()->prepare(
+        'SELECT * FROM drivers WHERE LOWER(username) = ? OR LOWER(email) = ? LIMIT 1'
+    );
+    $stmt->execute([$id, $id]);
+    $row = $stmt->fetch();
+
+    return $row ? repo_map_driver_row($row) : null;
+}
+
+function repo_update_customer_password(int $id, string $password): void
+{
+    $pdo = db();
+    $pdo->beginTransaction();
+    try {
+        $stmt = $pdo->prepare('UPDATE customers SET password = ? WHERE id = ?');
+        $stmt->execute([$password, $id]);
+        $stmt2 = $pdo->prepare('UPDATE users SET password = ? WHERE id = ?');
+        $stmt2->execute([$password, $id]);
+        $pdo->commit();
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
+}
+
+function repo_update_driver_password(int $id, string $password): void
+{
+    $stmt = db()->prepare('UPDATE drivers SET password = ? WHERE id = ?');
+    $stmt->execute([$password, $id]);
+}
+
 function repo_update_customer_profile(int $id, string $name, string $email, string $mobile): void
 {
     $pdo = db();
